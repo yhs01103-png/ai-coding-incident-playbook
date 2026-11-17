@@ -288,5 +288,95 @@
     "hash": "8e8ad95c8bf9637a95140d8e3df74677258e4c7a3f608a161fa13675ee64e3e9",
     "approved_at": "2026-11-17",
     "kind": "doc"
+  },
+  "project:AWDSD": {
+    "hash": "d678e2f229a19fa7b83f413efd6738aa5342635e6426ab2e6d42a7888335922b",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:AllAd_Launcher": {
+    "hash": "e2a935e38ba076c0e8c54575fae47e8b8012042af3e1f7f5fea8a3b41b225499",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:FileLens_App": {
+    "hash": "96b0ec67812bd302378b8cd58e504f056516e7f057817d59c3b8c4802517748c",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:Hub_App": {
+    "hash": "eaeca1a6fea4b5af7d44766ccb7566c6b8127cbf6ae2735772fe168ddb7cbfc6",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:JudgeCal_Athe": {
+    "hash": "36d93faa97d485de057832c535eb9065074c1df21d790f8892a87b3162ded9c9",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:Lazzy_App_OS_Monorepo": {
+    "hash": "c6a168b73d7d909764e6671e948aa4c515f89ef5aa970a251715de6f6e0fb471",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:Market_Agent_App": {
+    "hash": "2a8154e033735671f9d22b9c08681c75622b48b0352104ca8a7b66deab7a9721",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:Plug_in_Vesion": {
+    "hash": "bd63416c0e3c6d080cd8a16d47501805674f7ecdd5424773dea174f26b8c3ca9",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:RVS_App": {
+    "hash": "7780fc52ea55b9cd78a19f60cbb27add0f1eeee5b6389af373a73687cc37e9a8",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:SSOT_Explorer": {
+    "hash": "7af0e09d36d6f85ed2c79f35c39a540896c8f4632cc0ae1e8ff2c49c0453e644",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:_기록방식": {
+    "hash": "a5163cf02aafd47cb706a14cc3a42a934b660540e220d48dd07e53e43dd7ae89",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:poker_app": {
+    "hash": "65fb2b7e3fca262074ff6e46c559cfdac681e9f8a0a3a76acfa4a0b1d1fead98",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:대화전용_AI": {
+    "hash": "6240d7658ca0a9831f5f5e9e1a52d4bbc35485137a249374689d29ae723aace0",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:모조리_요약_NOVA": {
+    "hash": "ba1270fd7a188f1c3b132afa9a416dfe95d37e59495e52105543007e47d30ddd",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:미래_포커_ATOM": {
+    "hash": "20497fb8e34fbb27407d22800ac980548b134b04e4b7b55688ae7470c466669a",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:설계도_생성": {
+    "hash": "b82a3736d94b3724920ff62a03d5a012d50a3da888fd9a821e3585d629fa844d",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:인간_모델링_대화봇": {
+    "hash": "c6b0dbcae5279ab5ccf500599092ecbaccbdec5187967d99d9cb835a2a630656",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "project:터미널_단축키_모음집": {
+    "hash": "42aef93233b32fa5604bd8610e5b1556d8741472367b1047be9041efb39e3847",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "id": "모조리_요약_NOVA",
+  "name": "모조리 요약 NOVA",
+  "category": "AI 응용 · 로컬 도구",
+  "grade": 2,
+  "status": "완료",
+  "stack": ["FastAPI", "Python", "LLM", "Windows"],
+  "summary": "YouTube 자막을 가져와 AI로 요약하는 로컬 서버 도구. 실행하면 포트를 확인하고 브라우저를 자동으로 연다.",
+  "design_points": [
+    "수집(자막) → 정책 → AI 호출 → 저장을 폴더 단위로 나눈 작은 파이프라인",
+    "포트가 이미 쓰이면 바로 종료하고 이유를 안내"
+  ],
+  "checks": [
+    "포트가 겹치면 조용히 실패하지 않고 안내가 나온다",
+    "AI 키는 저장소에 들어가지 않는다"
+  ],
+  "course_card": "모조리 요약",
+  "milestones": []
+}

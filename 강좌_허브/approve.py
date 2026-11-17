@@ -6,11 +6,18 @@
 import datetime
 import json
 import sys
+from pathlib import Path
 
-from build import APPROVALS_FILE, SOURCE_DIR, load_json, publish_status
+from build import APPROVALS_FILE, SOURCE_DIR, load_json, publish_status  # noqa: F401 (SOURCE_DIR: 기본 출처)
 from logic.publish_check import changed_lines
 
 SNAP_DIR = APPROVALS_FILE.parent / "스냅샷"
+
+
+def snapshot_path(doc_id: str, snap_dir=SNAP_DIR) -> Path:
+    # "project:RVS_App"처럼 콜론이 든 키는 Windows 파일 이름에 못 쓰므로 바꾼다.
+    # 확장자는 기존 스냅샷(<id>.md)과 맞춘다.
+    return snap_dir / (doc_id.replace(":", "__") + ".md")
 
 
 def approve_ids(doc_ids, status, approvals_file=APPROVALS_FILE, snap_dir=SNAP_DIR, source_dir=SOURCE_DIR,
@@ -25,7 +32,8 @@ def approve_ids(doc_ids, status, approvals_file=APPROVALS_FILE, snap_dir=SNAP_DI
         if not s or s["status"] not in ("pending", "stale"):
             continue
         approvals[doc_id] = {"hash": s["hash"], "approved_at": today, "kind": "doc"}
-        (snap_dir / f"{doc_id}.md").write_text((source_dir / f"{doc_id}.md").read_text(encoding="utf-8"), encoding="utf-8")
+        src = Path(s["path"]) if s.get("path") else source_dir / f"{doc_id}.md"
+        snapshot_path(doc_id, snap_dir).write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
         done.append(doc_id)
     approvals_file.write_text(json.dumps(approvals, ensure_ascii=False, indent=2), encoding="utf-8")
     return done
@@ -37,10 +45,10 @@ def main() -> int:
     blocked = sum(1 for s in status.values() if s["status"] == "blocked")
     print(f"승인 대상 {len(todo)}개 (금지어로 막힌 {blocked}개는 원본을 고친 뒤 다시 빌드)")
     for n, (doc_id, s) in enumerate(todo, start=1):
-        print(f"\n[{n}] {doc_id} ({'바뀜' if s['status'] == 'stale' else '새 문서'})  공용\\{doc_id}.md")
-        snap = SNAP_DIR / f"{doc_id}.md"
+        print(f"\n[{n}] {doc_id} ({'바뀜' if s['status'] == 'stale' else '새 문서'})  {s['path']}")
+        snap = snapshot_path(doc_id)
         if s["status"] == "stale" and snap.exists():
-            diff = changed_lines(snap.read_text(encoding="utf-8"), (SOURCE_DIR / f"{doc_id}.md").read_text(encoding="utf-8"))
+            diff = changed_lines(snap.read_text(encoding="utf-8"), Path(s["path"]).read_text(encoding="utf-8"))
             print("\n".join("    " + d for d in diff[:30]) + ("\n    …" if len(diff) > 30 else ""))
 
     if "--list" in sys.argv or not todo:

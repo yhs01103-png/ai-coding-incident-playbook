@@ -1,10 +1,30 @@
 """규칙 JSON 고정 스키마 검사. 오류 문장 목록을 돌려주고, 비어 있으면 통과."""
 
-from logic.classify import KINDS
+from logic.classify import KINDS, TAGS
+
+PROJECT_STATUSES = {"운영", "개발 중", "보류", "완료"}
+PROJECT_TEXT = ("id", "name", "category", "summary")
+PROJECT_LISTS = ("stack", "design_points", "checks", "milestones")
+
+
+def validate_project(p: dict, rule_ids: set[str]) -> list[str]:
+    errs = [f"{f}: 비어 있음" for f in PROJECT_TEXT if not str(p.get(f, "")).strip()]
+    errs += [f"{f}: 목록 아님 또는 없음" for f in PROJECT_LISTS if not isinstance(p.get(f), list)]
+    if p.get("grade") not in (1, 2, 3, 4):
+        errs.append(f"grade: 1~4 아님 {p.get('grade')!r}")
+    if p.get("status") not in PROJECT_STATUSES:
+        errs.append(f"status: {sorted(PROJECT_STATUSES)} 중 하나가 아님 {p.get('status')!r}")
+    errs += [f"stack: 태그 목록에 없는 {t!r}" for t in p.get("stack") or [] if t not in TAGS]
+    for i, m in enumerate(p.get("milestones") or []):
+        for f in ("ref", "title", "why", "changed"):
+            if not str(m.get(f, "")).strip():
+                errs.append(f"milestones[{i}].{f}: 비어 있음")
+        errs += [f"milestones[{i}].rules: 없는 규칙 {r!r}" for r in m.get("rules", []) if r not in rule_ids]
+    return errs
 
 RULE_FIELDS = {
     "id": str, "title": str, "source": str, "intro": str,
-    "sections": list, "projects": list, "links": list, "updated": str,
+    "sections": list, "projects": list, "links": list, "updated": str, "tags": list,
 }
 REQUIRED_TEXT = ("id", "title", "source", "updated")
 

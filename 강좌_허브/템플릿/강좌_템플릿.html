@@ -9,8 +9,8 @@
 /* 기초 강좌(강좌_v2.html)·3월 교재와 같은 톤: 어두운 배경 + 보라/분홍/민트/주황 */
 :root{
   --bg:#08080a;--panel:#111115;--soft:#18181f;--soft2:#1f1f28;--line:#2c2c3e;--line2:#3a3a52;
-  --ink:#f0f0f6;--sub:#9a9ab8;--dim:#8a8aa8;
-  --accent:#7c6cfc;--accent-soft:rgba(124,108,252,.12);--code:#16161d;
+  --ink:#f2f2f8;--body:#dcdce8;--sub:#b4b4cc;--dim:#9a9ab8;
+  --accent:#7c6cfc;--link:#b3a8ff;--accent-soft:rgba(124,108,252,.16);--code:#14141b;
   --problem:#fc6c8f;--problem-soft:rgba(252,108,143,.12);--solution:#6cfcb8;--solution-soft:rgba(108,252,184,.1);
   --case:#a99cff;--case-soft:rgba(124,108,252,.14);--checklist:#fcb86c;--checklist-soft:rgba(252,184,108,.12);
   --muted:#9a9ab8;--muted-soft:#1f1f28;--ok:#6cfcb8;--bad:#fc6c8f;
@@ -18,12 +18,15 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);
-  font:15px/1.7 'Noto Sans KR','Malgun Gothic',system-ui,sans-serif}
+  font:16px/1.8 'Noto Sans KR','Malgun Gothic',system-ui,sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse at 15% 10%,rgba(124,108,252,.13) 0%,transparent 45%),
              radial-gradient(ellipse at 85% 85%,rgba(252,108,143,.09) 0%,transparent 45%)}
 header,main{position:relative;z-index:1}
-a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+/* 가독성: 본문은 한 줄 72자 안팎, 문단 색은 제목보다 한 단계 낮게, 강조는 더 밝게 */
+.md{color:var(--body);max-width:76ch}.md b{color:#fff}.intro{max-width:76ch}
+.md p,.md li{font-size:16px}.md li::marker{color:var(--dim)}
 header{position:sticky;top:0;z-index:5;background:rgba(17,17,21,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line2)}
 .bar{max-width:1280px;margin:0 auto;padding:14px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .brand{font-family:var(--head);font-weight:700;font-size:17px}
@@ -50,7 +53,13 @@ main{max-width:1280px;margin:0 auto;padding:20px}
 .item{display:block;padding:9px 10px;border-radius:10px;color:var(--ink);font-size:14px;line-height:1.4}
 .item:hover{background:var(--soft);text-decoration:none}.item.on{background:var(--accent-soft)}
 .item .m{display:flex;gap:6px;margin-top:3px;font-size:11px;color:var(--sub)}
-.count{font-size:12px;color:var(--sub);margin-top:8px}
+.count{font-size:12px;color:var(--sub);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.side-head{padding:4px 4px 14px;margin-bottom:12px;border-bottom:1px solid var(--line2)}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.side-title{font-family:var(--head);font-size:17px;font-weight:700;color:var(--ink);margin-top:4px}
+.side-desc{font-size:12.5px;color:var(--sub);line-height:1.6;margin-top:4px}
+.flabel{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--dim);margin:10px 2px 6px}
+.chips{margin-top:0!important}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 30px}
 @media (max-width:600px){.card{padding:18px}}
 h1.t{font-family:var(--head);font-size:24px;line-height:1.4;margin:0 0 12px}
@@ -63,13 +72,17 @@ section.s>h2,.hero h2,.pc h3{font-family:var(--head)}
   font-weight:700;font-size:14px;cursor:pointer;background:linear-gradient(135deg,#7c6cfc,#9a6cfc);color:#fff}
 .btn:hover{text-decoration:none;filter:brightness(1.1)}
 .btn.ghost{background:var(--soft);color:var(--ink)}.btn:disabled{opacity:.45;cursor:default}
-.intro{color:var(--sub);border-left:3px solid var(--line);padding-left:14px;margin:6px 0 10px}
+.intro{color:var(--body);background:var(--soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 10px 10px 0;margin:6px 0 10px}
 section.s{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
-section.s>h2{font-size:18px;margin:0 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.k{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;letter-spacing:.3px}
-.k.problem{background:var(--problem-soft);color:var(--problem)}.k.solution{background:var(--solution-soft);color:var(--solution)}
-.k.case{background:var(--case-soft);color:var(--case)}.k.checklist{background:var(--checklist-soft);color:var(--checklist)}
-.k.context,.k.related,.k.other{background:var(--muted-soft);color:var(--muted)}
+section.s>h2{font-size:19px;line-height:1.45;margin:0 0 10px;color:var(--ink);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* 절 종류 배지: 채운 색 + 어두운 글자로 대비를 크게 */
+.k{font-size:12px;font-weight:800;padding:3px 9px;border-radius:6px;letter-spacing:.3px;color:#14121c}
+.k.problem{background:var(--problem)}.k.solution{background:var(--solution)}
+.k.case{background:var(--case)}.k.checklist{background:var(--checklist)}
+.k.context,.k.related,.k.other{background:#3a3a52;color:#e4e4f0}
+section.s{border-left:3px solid transparent;margin-left:-16px;padding-left:13px}
+section.s:has(.k.problem){border-left-color:rgba(252,108,143,.55)}section.s:has(.k.solution){border-left-color:rgba(108,252,184,.5)}
+section.s:has(.k.case){border-left-color:rgba(169,156,255,.55)}section.s:has(.k.checklist){border-left-color:rgba(252,184,108,.55)}
 .md h3,.md h4{font-size:15px;margin:16px 0 6px}
 .md p{margin:8px 0}.md ul,.md ol{margin:8px 0;padding-left:22px}.md li{margin:3px 0}
 .md code{background:var(--soft2);color:#d6d0ff;padding:1px 6px;border-radius:5px;font:13px/1.5 var(--mono)}
@@ -104,6 +117,34 @@ textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:1
 .bars{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--soft);margin:8px 0 12px}
 .bars span{display:block}
 .empty{color:var(--sub);text-align:center;padding:60px 20px}
+/* 프로젝트 */
+.tag.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.method summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.method summary::-webkit-details-marker{display:none}.method summary b{font-family:var(--head);font-size:16px}
+.method .more{margin-left:auto;font-size:12px;color:var(--link)}.method[open] .more{display:none}
+.method .md{margin-top:14px}.method{margin-bottom:18px}
+.pfilter{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin:0 0 16px}
+.pfilter .flabel{margin:0}.pfilter .chips{margin:0 14px 0 0}
+.pcard{display:flex;flex-direction:column;color:var(--ink);transition:border-color .15s,transform .15s}
+.pcard:hover{text-decoration:none;border-color:rgba(124,108,252,.6);transform:translateY(-2px)}
+.pg{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sub);font-weight:600}
+.pg.big{font-size:14px;margin-bottom:6px}.stars{color:var(--checklist);letter-spacing:2px;font-size:14px}
+.pc .sum{color:var(--body);font-size:14px;line-height:1.7;margin:4px 0 12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.stack{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.pfoot{margin-top:auto;display:flex;gap:14px;font-size:12px;color:var(--sub);border-top:1px solid var(--line);padding-top:10px}
+.pfoot b{color:var(--ink);font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}@media (max-width:760px){.two{grid-template-columns:1fr}}
+.box{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.box ul{margin:8px 0 0;padding-left:18px;color:var(--body);font-size:14.5px}.box li{margin:5px 0}
+section.s.plain{border-left:0;margin-left:0;padding-left:0}
+.hint{font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:500;color:var(--dim)}
+.tl{list-style:none;margin:6px 0 0;padding:0 0 0 18px;border-left:2px solid var(--line2)}
+.tl li{position:relative;margin:0 0 18px;padding-left:6px}
+.tl li::before{content:'';position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--bg)}
+.tlh{display:flex;gap:8px;align-items:center}.ref{font:700 12px var(--mono);color:var(--accent);background:var(--accent-soft);padding:1px 8px;border-radius:6px}
+.date{font-size:12px;color:var(--dim)}.tlt{font-weight:700;font-size:16px;margin:4px 0 6px;color:var(--ink)}
+.tlr{color:var(--body);font-size:14.5px;margin:3px 0}.tlr .lbl{display:inline-block;min-width:58px;font-size:12px;font-weight:700;color:var(--dim)}
+.rl{margin:6px 0;padding-left:18px}.rl li{margin:6px 0}.rl .tag{margin-left:4px}.rl .fold{display:none}
 .hero{margin-bottom:18px}.hero h2{margin:0;font-size:22px}.hero p{margin:4px 0 0;color:var(--sub)}
 .prog{font-size:12px;color:var(--sub)}
 </style>
@@ -184,10 +225,18 @@ function filtered(){
 function sidebar(cur, mode){
   const projects = [...new Set(DATA.rules.flatMap(r => r.projects))].sort();
   const rows = filtered().filter(r => mode !== "quiz" || DATA.quizzes[r.id]);
+  const head = mode === "quiz"
+    ? ["QUIZ · 문제 풀기", "규칙별 퀴즈", "퀴즈가 있는 규칙만 보여요. 고르면 오른쪽에서 바로 풀어요."]
+    : ["RULES · 규칙 찾기", "범용 규칙 목록", "제목·내용으로 검색하고, 절 종류나 프로젝트로 좁혀요."];
   return `<aside class="side">
-    <input id="q" placeholder="규칙 검색" value="${esc(state.q)}">
+    <div class="side-head"><div class="eyebrow">${head[0]}</div><div class="side-title">${head[1]}</div>
+      <div class="side-desc">${head[2]}</div></div>
+    <label class="flabel" for="q">검색</label>
+    <input id="q" placeholder="예: 게이트, Hive, 동시 요청" value="${esc(state.q)}">
+    <div class="flabel">절 종류</div>
     <div class="chips">${["", "problem", "solution", "case", "checklist"].map(k =>
       `<span class="chip ${state.kind === k ? "on" : ""}" data-k="${k}">${k ? KIND[k] + " 있음" : "전체"}</span>`).join("")}</div>
+    <label class="flabel" for="proj">프로젝트</label>
     <select id="proj"><option value="">모든 프로젝트</option>${projects.map(p =>
       `<option ${state.project === p ? "selected" : ""}>${esc(p)}</option>`).join("")}</select>
     <div class="count">${rows.length}개</div>
@@ -208,7 +257,8 @@ function ruleView(id){
   const n = ((DATA.quizzes[r.id] || {}).questions || []).length;
   $("#app").innerHTML = `<div class="layout">${sidebar(r.id, "rules")}<article class="card">
     <h1 class="t">${esc(r.title)}</h1>
-    <div class="meta">${r.projects.map(p => `<a class="tag" href="#projects">${esc(p)}</a>`).join("")}
+    <div class="meta">${r.projects.map(p => `<a class="tag" href="${projById[p] ? "#project/" + encodeURIComponent(p) : "#projects"}">${esc(projById[p] ? projById[p].name : p)}</a>`).join("")}
+      ${(r.tags || []).map(t => `<span class="tag ghost">${esc(t)}</span>`).join("")}
       <span class="tag">갱신 ${esc(r.updated)}</span>${r.public ? "" : `<span class="tag warn">비공개</span>`}
       ${n ? `<a class="btn" style="margin-left:auto" href="#quiz/${encodeURIComponent(r.id)}">퀴즈 ${n}문제 풀기</a>` : ""}</div>
     ${r.intro ? `<div class="intro md">${md(r.intro)}</div>` : ""}
@@ -271,24 +321,80 @@ function quizView(id){
   });
   window.scrollTo(0, 0);
 }
+// ---------- 프로젝트 (강좌_v2 "만들어본 것들"과 같은 등급제) ----------
+const GRADE = {1: "입문", 2: "초중급", 3: "중급", 4: "고급"};
+const stars = g => "★".repeat(g) + "☆".repeat(4 - g);
+const projById = Object.fromEntries((DATA.projects || []).map(p => [p.id, p]));
+const pstate = {cat: "", grade: 0};
+const ruleLink = id => byId[id] ? `<a href="#rule/${encodeURIComponent(id)}">${esc(byId[id].title)}</a>` : "";
 function projectsView(){
   nav("projects");
-  const map = {}; DATA.rules.forEach(r => r.projects.forEach(p => (map[p] ||= []).push(r)));
-  const names = Object.keys(map).sort((a, b) => map[b].length - map[a].length);
-  const bar = rs => { const c = {}; rs.forEach(r => r.sections.forEach(s => c[s.kind] = (c[s.kind] || 0) + 1));
-    const t = Object.values(c).reduce((a, b) => a + b, 0) || 1;
-    return `<div class="bars">${["problem", "solution", "case", "checklist"].map(k => c[k] ?
-      `<span title="${KIND[k]} ${c[k]}" style="width:${c[k] / t * 100}%;background:${KIND_COLOR[k]}"></span>` : "").join("")}</div>`; };
-  $("#app").innerHTML = `<div class="hero"><h2>프로젝트별 적용 규칙</h2>
-    <p>각 규칙 문서의 실측 사례에 등장한 프로젝트를 모았습니다. 막대는 그 규칙들의 절 구성(문제·해법·사례·점검)입니다.</p></div>
-    <div class="grid">${names.map(p => `<div class="card pc"><h3>${esc(p)}</h3><div class="n">규칙 ${map[p].length}개</div>${bar(map[p])}
-      <ul>${map[p].map(r => `<li><a href="#rule/${encodeURIComponent(r.id)}">${esc(r.title)}</a></li>`).join("")}</ul></div>`).join("")}</div>`;
+  const P = DATA.projects || [];
+  // 카테고리는 "AI 응용 · 서버"처럼 두 단계 — 필터는 앞 단계(큰 묶음)로만 고른다.
+  const group = c => c.split(" · ")[0];
+  const cats = [...new Set(P.map(p => group(p.category)))].sort();
+  const shown = P.filter(p => (!pstate.cat || group(p.category) === pstate.cat) && (!pstate.grade || p.grade === pstate.grade))
+    .sort((a, b) => b.grade - a.grade || a.name.localeCompare(b.name));
+  const carded = new Set(P.map(p => p.id));
+  const others = {}; DATA.rules.forEach(r => r.projects.forEach(p => { if (!carded.has(p)) (others[p] ||= []).push(r); }));
+  $("#app").innerHTML = `<div class="hero"><div class="eyebrow">PROJECTS · 만들어본 것들</div><h2>프로젝트와 설계 판단</h2>
+      <p>카테고리와 설계 난이도로 좁히고, 카드를 누르면 전환점(큰 결정)과 이 프로젝트에 걸리는 규칙을 볼 수 있어요.</p></div>
+    ${DATA.method ? `<details class="card method"><summary><span class="eyebrow">HOW · 결정 기록 방식</span>
+      <b>모든 결정은 D·H·P·O 번호로 남깁니다</b><span class="more">펼치기</span></summary><div class="md">${md(DATA.method)}</div></details>` : ""}
+    <div class="pfilter"><span class="flabel">카테고리</span><div class="chips">${["", ...cats].map(c =>
+      `<span class="chip ${pstate.cat === c ? "on" : ""}" data-c="${esc(c)}">${c ? esc(c) : "전체"}</span>`).join("")}</div>
+      <span class="flabel">설계 난이도</span><div class="chips">${[0, 1, 2, 3, 4].map(g =>
+      `<span class="chip ${pstate.grade === g ? "on" : ""}" data-g="${g}">${g ? stars(g) + " " + GRADE[g] : "전체"}</span>`).join("")}</div></div>
+    <div class="grid">${shown.map(p => `<a class="card pc pcard" href="#project/${encodeURIComponent(p.id)}">
+      <div class="pg"><span class="stars">${stars(p.grade)}</span><span>${GRADE[p.grade]}</span>${p.public ? "" : `<span class="tag warn">비공개</span>`}</div>
+      <h3>${esc(p.name)}</h3><div class="n">${esc(p.category)} · ${esc(p.status)}</div>
+      <p class="sum">${esc(p.summary)}</p>
+      <div class="stack">${p.stack.slice(0, 6).map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+      <div class="pfoot"><span><b>${p.milestones.length}</b> 전환점</span><span><b>${p.rules_real.length}</b> 실측 규칙</span>
+        <span><b>${p.rules_applicable.length}</b> 적용 가능</span></div></a>`).join("") || `<div class="empty">조건에 맞는 프로젝트가 없어요.</div>`}</div>
+    ${Object.keys(others).length ? `<div class="hero" style="margin-top:28px"><div class="eyebrow">ALSO · 카드 준비 중</div>
+      <h2 style="font-size:18px">규칙에만 등장하는 프로젝트</h2></div><div class="grid">${Object.keys(others).sort().map(p =>
+      `<div class="card pc"><h3>${esc(p)}</h3><div class="n">실측 규칙 ${others[p].length}개</div>
+      <ul>${others[p].map(r => `<li>${ruleLink(r.id)}</li>`).join("")}</ul></div>`).join("")}</div>` : ""}`;
+  document.querySelectorAll(".pfilter .chip").forEach(c => c.onclick = () => {
+    if (c.dataset.c !== undefined) pstate.cat = c.dataset.c; else pstate.grade = +c.dataset.g; projectsView(); });
+  window.scrollTo(0, 0);
+}
+function projectView(id){
+  nav("projects");
+  const p = projById[id];
+  if (!p){ projectsView(); return; }
+  const appl = p.rules_applicable;
+  $("#app").innerHTML = `<article class="card pdetail">
+    <div class="meta"><a class="tag" href="#projects">← 프로젝트 목록</a>
+      ${DATA.course_link && p.course_card ? `<a class="tag" href="${esc(DATA.course_link)}" target="_blank" rel="noopener">기초 강좌 샘플 카드: ${esc(p.course_card)} ↗</a>` : ""}</div>
+    <div class="pg big"><span class="stars">${stars(p.grade)}</span><span>설계 난이도 · ${GRADE[p.grade]}</span>${p.public ? "" : `<span class="tag warn">비공개</span>`}</div>
+    <h1 class="t">${esc(p.name)}</h1>
+    <div class="meta"><span class="tag">${esc(p.category)}</span><span class="tag">${esc(p.status)}</span>
+      ${p.stack.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+    <div class="intro">${esc(p.summary)}</div>
+    <div class="two"><div class="box"><div class="eyebrow">🎯 설계 포인트</div><ul>${p.design_points.map(x => `<li>${inline(x)}</li>`).join("")}</ul></div>
+      <div class="box"><div class="eyebrow">✅ 확인 항목</div><ul>${p.checks.map(x => `<li>${inline(x)}</li>`).join("")}</ul></div></div>
+    <section class="s plain"><h2>전환점 <span class="hint">결정 기록에서 고른 큰 결정 · 원래 번호 그대로</span></h2>
+      <ol class="tl">${p.milestones.map(m => `<li><div class="tlh"><span class="ref">${esc(m.ref)}</span><span class="date">${esc(m.date || "")}</span></div>
+        <div class="tlt">${inline(m.title)}</div>
+        <div class="tlr"><span class="lbl">왜</span>${inline(m.why)}</div>
+        <div class="tlr"><span class="lbl">바뀐 것</span>${inline(m.changed)}</div>
+        ${m.rules.length ? `<div class="tlr"><span class="lbl">관련 규칙</span>${m.rules.map(ruleLink).join(" · ")}</div>` : ""}</li>`).join("")}</ol></section>
+    <section class="s plain"><h2>실측 규칙 <span class="hint">이 프로젝트에서 실제로 겪고 정리한 규칙</span></h2>
+      ${p.rules_real.length ? `<ul class="rl">${p.rules_real.map(r => `<li>${ruleLink(r)}</li>`).join("")}</ul>` : `<p class="hint">아직 없음</p>`}</section>
+    <section class="s plain"><h2>적용 가능 규칙 <span class="hint">기술 스택이 겹치는 다른 프로젝트의 규칙 · 많이 겹치는 순</span></h2>
+      <ul class="rl">${appl.map((r, i) => `<li class="${i >= 8 ? "fold" : ""}">${ruleLink(r.id)} ${r.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</li>`).join("")}</ul>
+      ${appl.length > 8 ? `<button class="btn ghost" id="more">${appl.length - 8}개 더 보기</button>` : ""}</section>
+  </article>`;
+  const more = $("#more"); if (more) more.onclick = () => { document.querySelectorAll(".rl .fold").forEach(x => x.classList.remove("fold")); more.remove(); };
   window.scrollTo(0, 0);
 }
 function route(keepFocus){
   const [v, raw] = location.hash.slice(1).split("/"); const id = raw ? decodeURIComponent(raw) : "";
   const pos = keepFocus && document.activeElement && document.activeElement.id === "q" ? document.activeElement.selectionStart : null;
-  if (v === "quiz") quizView(id); else if (v === "projects") projectsView(); else ruleView(id);
+  if (v === "quiz") quizView(id); else if (v === "projects") projectsView();
+  else if (v === "project") projectView(id); else ruleView(id);
   if (pos !== null){ const q = $("#q"); if (q){ q.focus(); q.setSelectionRange(pos, pos); } }
 }
 if (DATA.course_link){ const c = $("#course"); c.href = DATA.course_link; c.hidden = false; }

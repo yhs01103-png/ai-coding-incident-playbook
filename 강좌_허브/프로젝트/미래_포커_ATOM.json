@@ -1,0 +1,18 @@
+{
+  "id": "미래_포커_ATOM",
+  "name": "미래 포커 ATOM",
+  "category": "게임 · 로컬 도구",
+  "grade": 2,
+  "status": "완료",
+  "stack": ["FastAPI", "Python", "LLM", "웹"],
+  "summary": "포커 훈련용 로컬 서버와 브라우저 화면. 한 판을 두고 나면 AI가 플레이에 피드백을 준다. 이후 모바일 포커 아레나의 출발점이 됐다.",
+  "design_points": [
+    "게임 로직(game)과 서버(app)를 나누고 화면은 HTML 한 장",
+    "AI는 판이 끝난 뒤 피드백에만"
+  ],
+  "checks": [
+    "AI 없이도 게임 자체는 끝까지 진행된다",
+    "판 기록이 저장돼 다시 볼 수 있다"
+  ],
+  "milestones": []
+}

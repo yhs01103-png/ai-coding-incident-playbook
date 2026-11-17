@@ -8,17 +8,22 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from logic.classify import find_links, find_projects, section_kind
+from logic.classify import (apply_tag_overrides, find_links, find_projects, find_tags, link_project_rules,
+                            section_kind)
 from logic.parse_md import parse
 from logic.publish_check import content_hash, decide, scan
 from logic.render_html import render
-from logic.validate import validate_quiz, validate_rule
+from logic.validate import validate_project, validate_quiz, validate_rule
 
 HUB = Path(__file__).resolve().parent
 RULES_ROOT = HUB.parent
 SOURCE_DIR = RULES_ROOT / "공용"
 OUT_DIR = HUB / "규칙"
 QUIZ_DIR = HUB / "퀴즈"
+# 프로젝트 카드(<id>.json)와 결정 기록 방식 소개(_기록방식.md). 비공개 결정이력에서 다시 쓴 글이라 자동 승인 없음.
+PROJECT_DIR = HUB / "프로젝트"
+METHOD_FILE = PROJECT_DIR / "_기록방식.md"
+TAG_OVERRIDE_FILE = HUB / "태그_덮어쓰기.json"
 PATTERNS_FILE = HUB / "금지어.json"
 APPROVALS_FILE = HUB / "승인" / "승인.json"
 STATUS_FILE = HUB / "공개상태.json"
@@ -37,14 +42,16 @@ def publish_status() -> dict:
     """문서별 {status, hash, hits}. 매번 원본 md에서 새로 계산한다."""
     patterns = load_json(PATTERNS_FILE, [])
     approvals = load_json(APPROVALS_FILE, {})
+    sources = [(f.stem, f) for f in sorted(SOURCE_DIR.glob("*.md")) if f.name != "README.md"]
+    sources += [(f"project:{f.stem}", f) for f in sorted(PROJECT_DIR.glob("*.json"))]
+    if METHOD_FILE.exists():
+        sources.append(("project:_기록방식", METHOD_FILE))
     result = {}
-    for f in sorted(SOURCE_DIR.glob("*.md")):
-        if f.name == "README.md":
-            continue
+    for key, f in sources:
         text = f.read_text(encoding="utf-8")
         h = content_hash(text)
         hits = scan(text, patterns)
-        result[f.stem] = {"status": decide("doc", hits, approvals.get(f.stem), h), "hash": h, "hits": hits}
+        result[key] = {"status": decide("doc", hits, approvals.get(key), h), "hash": h, "hits": hits, "path": str(f)}
     return result
 
 
@@ -61,10 +68,30 @@ def quiz_status(doc_status: dict) -> dict:
     return result
 
 
-def write_html(rules: list[dict], quizzes: dict, public_only: bool, out_file: Path, course_link: str) -> None:
+def load_projects(rules: list[dict], errors: list[str]) -> list[dict]:
+    """프로젝트 카드를 읽어 검사하고, 실측·적용 가능 규칙을 붙인다."""
+    ids = {r["id"] for r in rules}
+    out = []
+    for f in sorted(PROJECT_DIR.glob("*.json")):
+        try:
+            p = json.loads(f.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            errors.append(f"프로젝트\\{f.name}: JSON 문법 오류 {e}")
+            continue
+        if p.get("id") != f.stem:
+            errors.append(f"프로젝트\\{f.name}: 파일 이름과 id가 다름")
+        errors += [f"프로젝트\\{f.name}: {e}" for e in validate_project(p, ids)]
+        real, appl = link_project_rules(p, rules)
+        out.append({**p, "rules_real": real, "rules_applicable": appl})
+    return out
+
+
+def write_html(rules: list[dict], quizzes: dict, public_only: bool, out_file: Path, course_link: str,
+               projects: list[dict] | None = None) -> None:
     status = publish_status()
+    method = METHOD_FILE.read_text(encoding="utf-8") if METHOD_FILE.exists() else ""
     html = render(TEMPLATE_FILE.read_text(encoding="utf-8"), rules, quizzes, status, quiz_status(status),
-                  public_only=public_only, course_link=course_link)
+                  public_only=public_only, course_link=course_link, projects=projects or [], method=method)
     out_file.write_text(html, encoding="utf-8")
 
 
@@ -102,9 +129,14 @@ def main() -> int:
             "projects": find_projects(text, projects),
             "links": find_links(text, ids, self_id=f.stem),
             "updated": datetime.date.fromtimestamp(f.stat().st_mtime).isoformat(),
+            "tags": find_tags(" ".join([doc["title"], doc["intro"], *(s["heading"] for s in doc["sections"])]),
+                              text),
         }
         errors += [f"{f.name}: {e}" for e in validate_rule(rule)]
         rules.append(rule)
+
+    # 자동 태그가 틀린 규칙은 태그_덮어쓰기.json에서 직접 정한다(적용 가능 규칙 연결의 정확도).
+    errors += apply_tag_overrides(rules, load_json(TAG_OVERRIDE_FILE, {}))
 
     by_id = {r["id"]: r for r in rules}
     quiz_count, quizzes = 0, {}
@@ -119,6 +151,8 @@ def main() -> int:
         errors += [f"퀴즈\\{q.name}: {e}" for e in validate_quiz(data, by_id)]
         quiz_count += len(data.get("questions", []))
         quizzes[q.stem] = data
+
+    project_cards = load_projects(rules, errors)
 
     if errors:
         print("스키마 위반 — 아무것도 쓰지 않음")
@@ -137,7 +171,8 @@ def main() -> int:
     if orphans:
         print(f"원본 md가 없는 JSON {len(orphans)}개(삭제는 직접): {', '.join(orphans)}")
     course = os.path.relpath(COURSE_V2, HUB).replace("\\", "/") if COURSE_V2.exists() else ""
-    write_html(rules, quizzes, public_only=False, out_file=HTML_FILE, course_link=course)
+    print(f"프로젝트 카드 {len(project_cards)}개 검사 통과")
+    write_html(rules, quizzes, public_only=False, out_file=HTML_FILE, course_link=course, projects=project_cards)
     print(f"강좌 페이지: {HTML_FILE.name} (개발용 — 전체 규칙, 비공개 배지 표시)")
     report_publish()
     return 0

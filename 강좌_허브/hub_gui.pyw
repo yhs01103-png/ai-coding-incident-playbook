@@ -11,7 +11,9 @@ from collections import Counter
 from tkinter import messagebox, ttk
 
 import build
-from approve import SNAP_DIR, approve_ids
+from pathlib import Path
+
+from approve import approve_ids, snapshot_path
 
 FONT = "Malgun Gothic"
 MONO = "Consolas"
@@ -30,11 +32,15 @@ def load_rows() -> list[dict]:
     quizzes = build.quiz_status(status)
     rows = []
     for doc_id, s in status.items():
-        src = build.SOURCE_DIR / f"{doc_id}.md"
-        rule_file = build.OUT_DIR / f"{doc_id}.json"
-        rule = json.loads(rule_file.read_text(encoding="utf-8")) if rule_file.exists() else {}
-        snap = SNAP_DIR / f"{doc_id}.md"
+        src = Path(s["path"])
         text = src.read_text(encoding="utf-8")
+        if doc_id.startswith("project:"):  # 프로젝트 카드·기록 방식 — 화면에서 구분되게 이름 앞에 표시
+            card = json.loads(text) if src.suffix == ".json" else {}
+            rule = {"title": "[프로젝트] " + card.get("name", src.stem)}
+        else:
+            rule_file = build.OUT_DIR / f"{doc_id}.json"
+            rule = json.loads(rule_file.read_text(encoding="utf-8")) if rule_file.exists() else {}
+        snap = snapshot_path(doc_id)
         old = snap.read_text(encoding="utf-8") if snap.exists() else None
         appr = approvals.get(doc_id)
         if appr is None:

@@ -32,6 +32,26 @@ def test_public_build_keeps_only_approved():
     assert set(d["quizzes"]) == {"a"}
 
 
+def test_public_build_filters_projects_method_and_rule_links():
+    projects = [
+        {"id": "P", "rules_real": ["a", "b"], "rules_applicable": [{"id": "b", "tags": ["x"]}],
+         "milestones": [{"ref": "D-1", "rules": ["a", "b"]}]},
+        {"id": "Q", "rules_real": [], "rules_applicable": [], "milestones": []},
+    ]
+    status = {**STATUS, "project:P": {"status": "approved"}, "project:Q": {"status": "pending"},
+              "project:_기록방식": {"status": "pending"}}
+    d = data_of(render(TEMPLATE, RULES, QUIZZES, status, QSTATUS, public_only=True, course_link="",
+                       projects=projects, method="방식"))
+    assert [p["id"] for p in d["projects"]] == ["P"]  # 승인 안 된 Q는 빠짐
+    p = d["projects"][0]
+    assert p["rules_real"] == ["a"] and p["rules_applicable"] == []  # 공개 안 된 b로 가는 연결도 빠짐
+    assert p["milestones"][0]["rules"] == ["a"]
+    assert d["method"] == ""  # 기록 방식도 승인 전엔 공개 안 됨
+    dev = data_of(render(TEMPLATE, RULES, QUIZZES, status, QSTATUS, public_only=False, course_link="",
+                         projects=projects, method="방식"))
+    assert len(dev["projects"]) == 2 and dev["method"] == "방식"
+
+
 def test_script_end_tag_in_content_cannot_break_out():
     html = render(TEMPLATE, RULES, QUIZZES, STATUS, QSTATUS, public_only=False, course_link="")
     assert html.count("</script>") == 1  # 템플릿 자신의 닫는 태그 하나뿐

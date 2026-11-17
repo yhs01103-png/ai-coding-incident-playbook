@@ -19,6 +19,21 @@ def test_plan_never_ships_internal_or_generated_files():
     assert all(f"강좌_허브/{c}" in dests for c in CODE_FILES)
 
 
+def test_plan_ships_approved_project_cards_to_project_folder():
+    status = dict(STATUS, **{"project:P": {"status": "approved"}, "project:Q": {"status": "pending"},
+                             "project:_기록방식": {"status": "approved"}})
+    files = dict(plan(status, QSTATUS))
+    assert files["강좌_허브/프로젝트/P.json"] == ("hub", "프로젝트/P.json")
+    assert files["강좌_허브/프로젝트/_기록방식.md"] == ("hub", "프로젝트/_기록방식.md")
+    assert "강좌_허브/프로젝트/Q.json" not in files
+    assert not any(":" in d for d in files)  # project 키가 공용 md 경로로 새지 않는다
+
+
+def test_public_tag_overrides_keep_only_approved_rules():
+    from logic.package_plan import public_tag_overrides
+    assert public_tag_overrides({"a": ["Windows"], "b": ["LLM"]}, {"a", "project:P"}) == {"a": ["Windows"]}
+
+
 def test_public_patterns_replace_account_name_only():
     pats = [{"label": "계정 이름", "regex": "secretname"}, {"label": "이메일", "regex": "x@y"}]
     out = public_patterns(pats)

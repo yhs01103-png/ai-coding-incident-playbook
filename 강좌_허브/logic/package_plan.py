@@ -7,19 +7,30 @@ CODE_FILES = [
     "logic/__init__.py", "logic/parse_md.py", "logic/classify.py", "logic/validate.py",
     "logic/publish_check.py", "logic/render_html.py", "logic/package_plan.py",
     "logic/test_logic.py", "logic/test_validate_quiz.py", "logic/test_publish_check.py",
-    "logic/test_render_html.py", "logic/test_package_plan.py",
+    "logic/test_render_html.py", "logic/test_package_plan.py", "logic/test_projects.py",
     "템플릿/강좌_템플릿.html",
 ]
+PROJECT_KEY = "project:"
 
 
 def plan(status: dict, quiz_status: dict) -> list[tuple[str, tuple[str, str]]]:
     """(저장소 안 경로, (출처 종류, 출처 상대경로)). 출처 종류: source=공용 md, hub=허브 파일."""
-    out = [(f"공용/{doc_id}.md", ("source", f"{doc_id}.md"))
-           for doc_id, s in sorted(status.items()) if s["status"] == "approved"]
+    approved = [k for k, s in sorted(status.items()) if s["status"] == "approved"]
+    out = [(f"공용/{k}.md", ("source", f"{k}.md")) for k in approved if not k.startswith(PROJECT_KEY)]
+    for k in approved:
+        if k.startswith(PROJECT_KEY):
+            pid = k[len(PROJECT_KEY):]
+            name = f"{pid}.md" if pid == "_기록방식" else f"{pid}.json"
+            out.append((f"강좌_허브/프로젝트/{name}", ("hub", f"프로젝트/{name}")))
     out += [(f"강좌_허브/퀴즈/{qid}.json", ("hub", f"퀴즈/{qid}.json"))
             for qid, s in sorted(quiz_status.items()) if s["status"] == "approved"]
     out += [(f"강좌_허브/{c}", ("hub", c)) for c in CODE_FILES]
     return out
+
+
+def public_tag_overrides(overrides: dict, approved: set[str]) -> dict:
+    """공개본에는 승인된 규칙의 덮어쓰기만 남긴다(없는 규칙이 있으면 공개본 빌드가 실패한다)."""
+    return {k: v for k, v in overrides.items() if k in approved}
 
 
 def public_patterns(patterns: list[dict]) -> list[dict]:

@@ -30,6 +30,73 @@ def find_projects(text: str, project_names: list[str]) -> list[str]:
     return sorted(set(re.findall(rf"(?<![\w])({names})(?![\w])", text)))
 
 
+# 기술 스택 태그. 규칙은 제목·머리말·절 제목에 한 번, 또는 본문에 3번 이상 나오면 그 태그를 갖는다.
+# 프로젝트 카드의 stack은 이 이름들 중에서만 고른다. 겹치면 "적용 가능 규칙"으로 연결된다.
+TAGS = {
+    "Flutter": ["Flutter", "Dart", "Riverpod", "위젯"],
+    "Android": ["Android", "APK", "adb", "안드로이드", "접근성"],
+    "로컬 저장소": ["Hive", "SQLite", "로컬 DB"],
+    "FastAPI": ["FastAPI", "미들웨어", "dependency"],
+    "Python": ["Python", "파이썬", "pytest", "mypy"],
+    "LLM": ["LLM", "Gemini", "프롬프트", "임베딩"],
+    "Windows": ["Windows", "PowerShell", "배치파일", "DPAPI", "cmd"],
+    "결제·한도": ["결제", "지갑", "환불", "쿼터", "크레딧", "하루 예산"],
+    "배포·운영": ["배포", "promote", "서비스용", "승격", "Railway", "Docker"],
+    "보안·개인정보": ["시크릿", "암호화", "개인정보", "토큰", "비밀"],
+    "웹": ["Vite", "TypeScript", "브라우저", "웹 클라이언트"],
+    "AI 에이전트": ["MCP", "서브에이전트", "Claude Code", "CLAUDE.md"],
+    "게이트": ["게이트", "레이트리미터", "fail-closed", "fail-open", "동시 요청"],
+    # 아래는 단어로 판정하기 어려워 자동으로 붙지 않는다 — 태그_덮어쓰기.json과 프로젝트 stack에서만 쓴다.
+    "설계·구조": [],
+    "테스트": [],
+    "Git·문서": [],
+}
+
+
+def find_tags(head: str, body: str) -> list[str]:
+    out = []
+    for tag, words in TAGS.items():
+        if not words:
+            continue
+        rx = re.compile("|".join(re.escape(w) for w in words), re.IGNORECASE)
+        if rx.search(head) or len(rx.findall(body)) >= 3:
+            out.append(tag)
+    return out
+
+
+def apply_tag_overrides(rules: list[dict], overrides: dict) -> list[str]:
+    """태그_덮어쓰기.json({규칙 id: [태그, ...]})이 자동 태그를 통째로 바꾼다. 없는 규칙·태그는 적용하지 않고 오류로 돌려준다."""
+    by_id = {r["id"]: r for r in rules}
+    errs = []
+    for rid, tags in overrides.items():
+        bad = [t for t in tags if t not in TAGS]
+        if rid not in by_id:
+            errs.append(f"태그_덮어쓰기: 없는 규칙 {rid!r}")
+        elif bad:
+            errs.append(f"태그_덮어쓰기: {rid} — 태그 목록에 없는 {bad}")
+        else:
+            by_id[rid]["tags"] = list(tags)
+            by_id[rid]["tags_overridden"] = True
+    return errs
+
+
+def link_project_rules(project: dict, rules: list[dict]) -> tuple[list[str], list[dict]]:
+    """실측 = 사례에 이 프로젝트가 나오는 규칙. 적용 가능 = 실측이 아니면서 스택 태그가 겹치는 규칙(많이 겹치는 순)."""
+    real = sorted(r["id"] for r in rules if project["id"] in r.get("projects", []))
+    stack = set(project.get("stack", []))
+    appl = []
+    for r in rules:
+        if r["id"] in real:
+            continue
+        tags = r.get("tags", [])
+        common = [t for t in TAGS if t in stack and t in tags]
+        # 2개 이상 겹치거나, 태그가 하나뿐인 규칙이 그 하나로 맞을 때만 — 넓은 태그 하나로 우연히 걸리는 것을 뺀다.
+        if len(common) >= 2 or (len(common) == 1 and len(tags) == 1):
+            appl.append({"id": r["id"], "tags": common})
+    appl.sort(key=lambda x: (-len(x["tags"]), x["id"]))
+    return real, appl
+
+
 MD_REF = re.compile(r"([^\s`'\"()\[\]<>/\\|,*]+)\.md")
 
 

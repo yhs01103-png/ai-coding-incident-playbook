@@ -58,7 +58,7 @@ def test_find_links_with_path_prefix_and_unknown_names():
 def test_validate_rule_reports_missing_fields():
     good = {"id": "a", "title": "t", "source": "공용/a.md", "intro": "",
             "sections": [{"kind": "problem", "heading": "함정", "body": "x"}],
-            "projects": [], "links": [], "updated": "2026-11-17"}
+            "projects": [], "links": [], "updated": "2026-11-17", "tags": []}
     assert validate_rule(good) == []
     bad = dict(good, title="", sections=[{"kind": "zzz", "heading": "", "body": ""}])
     errs = validate_rule(bad)
