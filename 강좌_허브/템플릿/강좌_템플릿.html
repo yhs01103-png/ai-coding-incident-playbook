@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 코딩 사고 플레이북</title>
+<link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* 기초 강좌(강좌_v2.html)·3월 교재와 같은 톤: 어두운 배경 + 보라/분홍/민트/주황 */
+:root{
+  --bg:#08080a;--panel:#111115;--soft:#18181f;--soft2:#1f1f28;--line:#2c2c3e;--line2:#3a3a52;
+  --ink:#f0f0f6;--sub:#9a9ab8;--dim:#8a8aa8;
+  --accent:#7c6cfc;--accent-soft:rgba(124,108,252,.12);--code:#16161d;
+  --problem:#fc6c8f;--problem-soft:rgba(252,108,143,.12);--solution:#6cfcb8;--solution-soft:rgba(108,252,184,.1);
+  --case:#a99cff;--case-soft:rgba(124,108,252,.14);--checklist:#fcb86c;--checklist-soft:rgba(252,184,108,.12);
+  --muted:#9a9ab8;--muted-soft:#1f1f28;--ok:#6cfcb8;--bad:#fc6c8f;
+  --head:'Gmarket Sans','Noto Sans KR',sans-serif;--mono:'JetBrains Mono',Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.7 'Noto Sans KR','Malgun Gothic',system-ui,sans-serif}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 15% 10%,rgba(124,108,252,.13) 0%,transparent 45%),
+             radial-gradient(ellipse at 85% 85%,rgba(252,108,143,.09) 0%,transparent 45%)}
+header,main{position:relative;z-index:1}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header{position:sticky;top:0;z-index:5;background:rgba(17,17,21,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line2)}
+.bar{max-width:1280px;margin:0 auto;padding:14px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-family:var(--head);font-weight:700;font-size:17px}
+.brand small{display:block;font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:2px;order:-1}
+.brand{display:flex;flex-direction:column}
+nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+nav a{padding:7px 14px;border-radius:999px;color:var(--sub);font-weight:500;font-size:14px;border:1px solid transparent}
+nav a.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(124,108,252,.35)}
+nav a:hover{text-decoration:none;color:var(--ink)}
+main{max-width:1280px;margin:0 auto;padding:20px}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.side{position:sticky;top:76px;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:14px;max-height:calc(100vh - 96px);display:flex;flex-direction:column}
+@media (max-width:860px){.side{position:static;max-height:none}}
+.side input,.side select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--soft);color:var(--ink);font:inherit;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--sub);border-radius:999px;
+  padding:3px 10px;font-size:12px;cursor:pointer;font-weight:600}
+.chip.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(124,108,252,.45)}
+.list{overflow:auto;margin:6px -6px 0;padding:0 6px}
+.item{display:block;padding:9px 10px;border-radius:10px;color:var(--ink);font-size:14px;line-height:1.4}
+.item:hover{background:var(--soft);text-decoration:none}.item.on{background:var(--accent-soft)}
+.item .m{display:flex;gap:6px;margin-top:3px;font-size:11px;color:var(--sub)}
+.count{font-size:12px;color:var(--sub);margin-top:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 30px}
+@media (max-width:600px){.card{padding:18px}}
+h1.t{font-family:var(--head);font-size:24px;line-height:1.4;margin:0 0 12px}
+section.s>h2,.hero h2,.pc h3{font-family:var(--head)}
+.card{box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px}
+.tag{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--soft);color:var(--sub);font-weight:600}
+.tag.warn{background:var(--problem-soft);color:var(--problem)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:10px;padding:9px 16px;font:inherit;
+  font-weight:700;font-size:14px;cursor:pointer;background:linear-gradient(135deg,#7c6cfc,#9a6cfc);color:#fff}
+.btn:hover{text-decoration:none;filter:brightness(1.1)}
+.btn.ghost{background:var(--soft);color:var(--ink)}.btn:disabled{opacity:.45;cursor:default}
+.intro{color:var(--sub);border-left:3px solid var(--line);padding-left:14px;margin:6px 0 10px}
+section.s{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+section.s>h2{font-size:18px;margin:0 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.k{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;letter-spacing:.3px}
+.k.problem{background:var(--problem-soft);color:var(--problem)}.k.solution{background:var(--solution-soft);color:var(--solution)}
+.k.case{background:var(--case-soft);color:var(--case)}.k.checklist{background:var(--checklist-soft);color:var(--checklist)}
+.k.context,.k.related,.k.other{background:var(--muted-soft);color:var(--muted)}
+.md h3,.md h4{font-size:15px;margin:16px 0 6px}
+.md p{margin:8px 0}.md ul,.md ol{margin:8px 0;padding-left:22px}.md li{margin:3px 0}
+.md code{background:var(--soft2);color:#d6d0ff;padding:1px 6px;border-radius:5px;font:13px/1.5 var(--mono)}
+.md pre{background:var(--code);border:1px solid var(--line);padding:14px 16px;border-radius:10px;overflow:auto;margin:10px 0}
+.md pre code{color:var(--ink)}
+.md pre code{background:none;padding:0;font-size:13px}
+.md blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 8px 8px 0}
+.md table{border-collapse:collapse;margin:10px 0;font-size:14px;display:block;overflow:auto}
+.md th,.md td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+.md th{background:var(--soft)}
+.q{border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0;background:var(--panel)}
+.q .qh{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sub);font-weight:700;margin-bottom:6px}
+.q .sit{font-weight:600;margin:0 0 12px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--soft);color:var(--ink);
+  border-radius:10px;padding:10px 14px;margin:6px 0;font:inherit;font-size:14px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}.opt.ok{border-color:var(--ok);background:var(--solution-soft)}
+.opt.bad{border-color:var(--bad);background:var(--problem-soft)}
+.code{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:8px 0;overflow:auto;font:13px/1.6 var(--mono)}
+.ln{display:flex;cursor:pointer;padding:0 14px;white-space:pre}.ln:hover{background:var(--accent-soft)}
+.ln i{font-style:normal;color:var(--sub);width:28px;flex:none;user-select:none}
+.ln.pick{background:var(--accent-soft);box-shadow:inset 3px 0 var(--accent)}
+.ln.ok{background:var(--solution-soft);box-shadow:inset 3px 0 var(--ok)}.ln.bad{background:var(--problem-soft);box-shadow:inset 3px 0 var(--bad)}
+textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft);
+  color:var(--ink);font:inherit;font-size:14px;resize:vertical}
+.rub label{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:14px;cursor:pointer}
+.exp{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--soft);font-size:14px}
+.exp b.ok{color:var(--ok)}.exp b.bad{color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.pc h3{margin:0 0 4px;font-size:17px}.pc .n{color:var(--sub);font-size:13px;margin-bottom:10px}
+.pc ul{margin:0;padding-left:18px;font-size:14px}.pc li{margin:3px 0}
+.bars{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--soft);margin:8px 0 12px}
+.bars span{display:block}
+.empty{color:var(--sub);text-align:center;padding:60px 20px}
+.hero{margin-bottom:18px}.hero h2{margin:0;font-size:22px}.hero p{margin:4px 0 0;color:var(--sub)}
+.prog{font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="brand"><small>Incident → Rule → Code → Effect</small>AI 코딩 사고 플레이북</div>
+  <nav id="nav">
+    <a href="#rules" data-v="rules">규칙</a>
+    <a href="#quiz" data-v="quiz">퀴즈</a>
+    <a href="#projects" data-v="projects">프로젝트</a>
+    <a id="course" href="#" target="_blank" rel="noopener" hidden>기초 강좌 ↗</a>
+  </nav>
+</div></header>
+<main id="app"></main>
+<script>
+const DATA = /*__DATA__*/;
+const KIND = {problem:"문제",solution:"해법",case:"사례",checklist:"점검",context:"언제",related:"함께 볼 것",other:"기타"};
+const KIND_COLOR = {problem:"var(--problem)",solution:"var(--solution)",case:"var(--case)",checklist:"var(--checklist)"};
+const byId = Object.fromEntries(DATA.rules.map(r => [r.id, r]));
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const state = {q:"", kind:"", project:""};
+
+// ---------- 진도 저장 (브라우저에만, 실패해도 화면은 동작) ----------
+function loadProg(){ try { return JSON.parse(localStorage.getItem("playbook-progress") || "{}"); } catch { return {}; } }
+function saveProg(p){ try { localStorage.setItem("playbook-progress", JSON.stringify(p)); } catch {} }
+let PROG = loadProg();
+function mark(ruleId, qid, val){ (PROG[ruleId] ||= {})[qid] = val; saveProg(PROG); }
+
+// ---------- 마크다운 (본문을 먼저 이스케이프한 뒤 최소 문법만) ----------
+function inline(s){
+  const codes = [];
+  s = esc(s).replace(/`([^`]+)`/g, (_, c) => { codes.push(c); return "\u0000" + (codes.length - 1) + "\u0000"; });
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+       .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  s = s.replace(/\u0000(\d+)\u0000/g, (_, i) => {
+    const c = codes[+i], id = c.replace(/^.*[\/\\]/, "").replace(/\.md$/, "");
+    return byId[id] && id !== c ? `<a href="#rule/${encodeURIComponent(id)}"><code>${c}</code></a>` : `<code>${c}</code>`;
+  });
+  return s.replace(/([^\s<>`"/\\(]+)\.md\b/g, (m, id) => byId[id] ? `<a href="#rule/${encodeURIComponent(id)}">${m}</a>` : m);
+}
+function md(src){
+  const L = String(src || "").replace(/\r/g, "").split("\n"); let out = "", i = 0;
+  while (i < L.length){
+    const l = L[i];
+    if (/^\s*```/.test(l)){ const b = []; i++; while (i < L.length && !/^\s*```/.test(L[i])) b.push(L[i++]); i++;
+      out += `<pre><code>${esc(b.join("\n"))}</code></pre>`; continue; }
+    if (/^\s*\|/.test(l)){ const rows = []; while (i < L.length && /^\s*\|/.test(L[i])) rows.push(L[i++]);
+      const cells = r => r.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+      const body = rows.filter(r => !/^\s*\|[\s:|-]+\|\s*$/.test(r));
+      out += "<table>" + body.map((r, n) => "<tr>" + cells(r).map(c => n ? `<td>${inline(c)}</td>` : `<th>${inline(c)}</th>`).join("") + "</tr>").join("") + "</table>"; continue; }
+    let h = l.match(/^(#{3,6})\s+(.*)/); if (h){ out += `<h${Math.min(h[1].length, 4)}>${inline(h[2])}</h${Math.min(h[1].length, 4)}>`; i++; continue; }
+    if (/^\s*>/.test(l)){ const b = []; while (i < L.length && /^\s*>/.test(L[i])) b.push(L[i++].replace(/^\s*>\s?/, ""));
+      out += `<blockquote>${inline(b.join(" "))}</blockquote>`; continue; }
+    if (/^\s*([-*]|\d+\.)\s+/.test(l)){ const ord = /^\s*\d+\./.test(l); const items = [];
+      while (i < L.length && (/^\s*([-*]|\d+\.)\s+/.test(L[i]) || (/^\s{2,}\S/.test(L[i]) && items.length))){
+        if (/^\s*([-*]|\d+\.)\s+/.test(L[i])) items.push(L[i].replace(/^\s*([-*]|\d+\.)\s+/, "")); else items[items.length - 1] += " " + L[i].trim(); i++; }
+      out += (ord ? "<ol>" : "<ul>") + items.map(t => `<li>${inline(t)}</li>`).join("") + (ord ? "</ol>" : "</ul>"); continue; }
+    if (!l.trim()){ i++; continue; }
+    const p = []; while (i < L.length && L[i].trim() && !/^\s*(```|\||#{3,}|>|[-*]\s|\d+\.\s)/.test(L[i])) p.push(L[i++]);
+    if (!p.length) p.push(L[i++]);
+    out += `<p>${inline(p.join(" "))}</p>`;
+  }
+  return out;
+}
+
+// ---------- 화면 ----------
+function nav(v){ document.querySelectorAll("#nav a[data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v)); }
+function quizDone(id){ const qs = (DATA.quizzes[id] || {}).questions || []; const p = PROG[id] || {};
+  return [qs.filter(q => p[q.id] === "ok").length, qs.length]; }
+function filtered(){
+  const q = state.q.trim().toLowerCase();
+  return DATA.rules.filter(r => (!q || (r.title + " " + r.id + " " + r.intro).toLowerCase().includes(q))
+    && (!state.kind || r.sections.some(s => s.kind === state.kind))
+    && (!state.project || r.projects.includes(state.project)));
+}
+function sidebar(cur, mode){
+  const projects = [...new Set(DATA.rules.flatMap(r => r.projects))].sort();
+  const rows = filtered().filter(r => mode !== "quiz" || DATA.quizzes[r.id]);
+  return `<aside class="side">
+    <input id="q" placeholder="규칙 검색" value="${esc(state.q)}">
+    <div class="chips">${["", "problem", "solution", "case", "checklist"].map(k =>
+      `<span class="chip ${state.kind === k ? "on" : ""}" data-k="${k}">${k ? KIND[k] + " 있음" : "전체"}</span>`).join("")}</div>
+    <select id="proj"><option value="">모든 프로젝트</option>${projects.map(p =>
+      `<option ${state.project === p ? "selected" : ""}>${esc(p)}</option>`).join("")}</select>
+    <div class="count">${rows.length}개</div>
+    <div class="list">${rows.map(r => { const [d, n] = quizDone(r.id); return `<a class="item ${r.id === cur ? "on" : ""}"
+      href="#${mode === "quiz" ? "quiz" : "rule"}/${encodeURIComponent(r.id)}">${esc(r.title)}
+      <div class="m">${n ? `<span>퀴즈 ${d}/${n}</span>` : ""}${r.public ? "" : "<span>비공개</span>"}</div></a>`; }).join("")}</div>
+  </aside>`;
+}
+function bindSide(){
+  $("#q").oninput = e => { state.q = e.target.value; route(true); };
+  document.querySelectorAll(".chip").forEach(c => c.onclick = () => { state.kind = c.dataset.k; route(); });
+  $("#proj").onchange = e => { state.project = e.target.value; route(); };
+}
+function ruleView(id){
+  nav("rules");
+  const r = byId[id] || filtered()[0];
+  if (!r){ $("#app").innerHTML = `<div class="empty">규칙이 없습니다.</div>`; return; }
+  const n = ((DATA.quizzes[r.id] || {}).questions || []).length;
+  $("#app").innerHTML = `<div class="layout">${sidebar(r.id, "rules")}<article class="card">
+    <h1 class="t">${esc(r.title)}</h1>
+    <div class="meta">${r.projects.map(p => `<a class="tag" href="#projects">${esc(p)}</a>`).join("")}
+      <span class="tag">갱신 ${esc(r.updated)}</span>${r.public ? "" : `<span class="tag warn">비공개</span>`}
+      ${n ? `<a class="btn" style="margin-left:auto" href="#quiz/${encodeURIComponent(r.id)}">퀴즈 ${n}문제 풀기</a>` : ""}</div>
+    ${r.intro ? `<div class="intro md">${md(r.intro)}</div>` : ""}
+    ${r.sections.map(s => `<section class="s"><h2><span class="k ${s.kind}">${KIND[s.kind]}</span>${inline(s.heading)}</h2>
+      <div class="md">${md(s.body)}</div></section>`).join("")}
+  </article></div>`;
+  bindSide(); window.scrollTo(0, 0);
+}
+function question(r, q, n){
+  const done = (PROG[r.id] || {})[q.id];
+  const head = `<div class="qh">Q${n + 1} · ${{choice: "보기 고르기", spot: "틀린 줄 찾기", scenario: "서술 · 기준표 자기 채점"}[q.type]}
+    ${done === "ok" ? "· ✓ 맞힘" : done === "no" ? "· 다시 풀어 보기" : ""}</div><p class="sit">${inline(q.situation)}</p>`;
+  if (q.type === "choice") return `<div class="q" data-q="${q.id}">${head}${q.options.map((o, i) =>
+    `<button class="opt" data-i="${i}">${inline(o)}</button>`).join("")}<div class="out"></div></div>`;
+  if (q.type === "spot") return `<div class="q" data-q="${q.id}">${head}<div class="code">${q.code.split("\n").map((l, i) =>
+    `<div class="ln" data-l="${i + 1}"><i>${i + 1}</i>${esc(l) || " "}</div>`).join("")}</div>
+    <div class="row"><button class="btn chk">고른 줄 확인</button><span class="prog">줄을 눌러 고르세요</span></div><div class="out"></div></div>`;
+  return `<div class="q" data-q="${q.id}">${head}<textarea placeholder="먼저 직접 답을 적어 보세요"></textarea>
+    <div class="row"><button class="btn show">기준표 보기</button></div><div class="out"></div></div>`;
+}
+function quizView(id){
+  nav("quiz");
+  const withQ = DATA.rules.filter(r => DATA.quizzes[r.id]);
+  const r = byId[id] && DATA.quizzes[id] ? byId[id] : withQ[0];
+  if (!r){ $("#app").innerHTML = `<div class="empty">아직 퀴즈가 없습니다.</div>`; return; }
+  const qs = DATA.quizzes[r.id].questions;
+  $("#app").innerHTML = `<div class="layout">${sidebar(r.id, "quiz")}<article class="card">
+    <div class="meta"><a class="tag" href="#rule/${encodeURIComponent(r.id)}">← 규칙 본문</a></div>
+    <h1 class="t">${esc(r.title)}</h1><div id="qs">${qs.map((q, n) => question(r, q, n)).join("")}</div></article></div>`;
+  bindSide();
+  qs.forEach(q => {
+    const box = document.querySelector(`.q[data-q="${q.id}"]`), out = box.querySelector(".out");
+    const explain = ok => `<div class="exp">${ok === null ? "" : ok ? '<b class="ok">맞았습니다.</b> ' : '<b class="bad">아닙니다.</b> '}${inline(q.explain)}
+      ${q.section ? `<div class="prog" style="margin-top:6px">근거: ${inline(q.section)}</div>` : ""}</div>`;
+    if (q.type === "choice") box.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+      const ok = +b.dataset.i === q.answer;
+      box.querySelectorAll(".opt").forEach(x => x.classList.remove("ok", "bad"));
+      b.classList.add(ok ? "ok" : "bad"); if (!ok) box.querySelector(`.opt[data-i="${q.answer}"]`).classList.add("ok");
+      out.innerHTML = explain(ok); mark(r.id, q.id, ok ? "ok" : "no");
+    });
+    if (q.type === "spot"){
+      box.querySelectorAll(".ln").forEach(l => l.onclick = () => l.classList.toggle("pick"));
+      box.querySelector(".chk").onclick = () => {
+        const picked = [...box.querySelectorAll(".ln.pick")].map(l => +l.dataset.l).sort((a, b) => a - b);
+        const ans = [...q.answer_lines].sort((a, b) => a - b), ok = JSON.stringify(picked) === JSON.stringify(ans);
+        box.querySelectorAll(".ln").forEach(l => { l.classList.remove("ok", "bad");
+          if (ans.includes(+l.dataset.l)) l.classList.add("ok"); else if (l.classList.contains("pick")) l.classList.add("bad"); });
+        out.innerHTML = explain(ok); mark(r.id, q.id, ok ? "ok" : "no");
+      };
+    }
+    if (q.type === "scenario") box.querySelector(".show").onclick = () => {
+      out.innerHTML = `<div class="exp rub"><b>내 답이 이 기준을 채웠나요?</b>${q.rubric.map((c, i) =>
+        `<label><input type="checkbox" data-i="${i}"> ${inline(c)}</label>`).join("")}<div class="tail"></div></div>`;
+      const boxes = out.querySelectorAll("input"), tail = out.querySelector(".tail");
+      const upd = () => { const n = [...boxes].filter(b => b.checked).length; const ok = n === boxes.length;
+        tail.innerHTML = `<div class="prog" style="margin:8px 0">${n}/${boxes.length} 충족</div>${inline(q.explain)}`;
+        mark(r.id, q.id, ok ? "ok" : "no"); };
+      boxes.forEach(b => b.onchange = upd); upd();
+    };
+  });
+  window.scrollTo(0, 0);
+}
+function projectsView(){
+  nav("projects");
+  const map = {}; DATA.rules.forEach(r => r.projects.forEach(p => (map[p] ||= []).push(r)));
+  const names = Object.keys(map).sort((a, b) => map[b].length - map[a].length);
+  const bar = rs => { const c = {}; rs.forEach(r => r.sections.forEach(s => c[s.kind] = (c[s.kind] || 0) + 1));
+    const t = Object.values(c).reduce((a, b) => a + b, 0) || 1;
+    return `<div class="bars">${["problem", "solution", "case", "checklist"].map(k => c[k] ?
+      `<span title="${KIND[k]} ${c[k]}" style="width:${c[k] / t * 100}%;background:${KIND_COLOR[k]}"></span>` : "").join("")}</div>`; };
+  $("#app").innerHTML = `<div class="hero"><h2>프로젝트별 적용 규칙</h2>
+    <p>각 규칙 문서의 실측 사례에 등장한 프로젝트를 모았습니다. 막대는 그 규칙들의 절 구성(문제·해법·사례·점검)입니다.</p></div>
+    <div class="grid">${names.map(p => `<div class="card pc"><h3>${esc(p)}</h3><div class="n">규칙 ${map[p].length}개</div>${bar(map[p])}
+      <ul>${map[p].map(r => `<li><a href="#rule/${encodeURIComponent(r.id)}">${esc(r.title)}</a></li>`).join("")}</ul></div>`).join("")}</div>`;
+  window.scrollTo(0, 0);
+}
+function route(keepFocus){
+  const [v, raw] = location.hash.slice(1).split("/"); const id = raw ? decodeURIComponent(raw) : "";
+  const pos = keepFocus && document.activeElement && document.activeElement.id === "q" ? document.activeElement.selectionStart : null;
+  if (v === "quiz") quizView(id); else if (v === "projects") projectsView(); else ruleView(id);
+  if (pos !== null){ const q = $("#q"); if (q){ q.focus(); q.setSelectionRange(pos, pos); } }
+}
+if (DATA.course_link){ const c = $("#course"); c.href = DATA.course_link; c.hidden = false; }
+window.addEventListener("hashchange", () => route());
+route();
+</script>
+</body>
+</html>

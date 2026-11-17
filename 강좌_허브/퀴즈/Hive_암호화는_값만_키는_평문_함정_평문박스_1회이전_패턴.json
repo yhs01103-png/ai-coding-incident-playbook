@@ -1,0 +1,40 @@
+{
+  "rule_id": "Hive_암호화는_값만_키는_평문_함정_평문박스_1회이전_패턴",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "함정 1. 암호화되는 건 값뿐이다 — 박스 키(key)는 파일에 평문으로 남는다",
+      "situation": "Hive 박스를 encryptionCipher로 암호화했다. 키는 사용자 전화번호, 값은 대화 요약이다. 기기에서 박스 파일을 열어 보면 무엇이 보이는가?",
+      "options": [
+        "아무것도 읽을 수 없다 — 파일 전체가 암호화된다",
+        "전화번호(키)는 그대로 보이고, 대화 요약(값)만 암호화돼 있다",
+        "대화 요약(값)은 보이고, 전화번호(키)만 암호화돼 있다",
+        "앱이 실행 중일 때만 평문으로 보인다"
+      ],
+      "answer": 1,
+      "explain": "Hive 암호화는 값만 암호화하고 키는 평문으로 남긴다. 개인정보를 키로 쓰면 암호화를 켜도 노출된다. 키를 해시로 바꿔 저장한다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "함정 2. 이전 버전이 만든 평문 박스를 그냥 암호화 모드로 열면 깨진다",
+      "situation": "이미 설치된 앱에 암호화를 추가하면서, 기존 평문 박스를 한 번 옮기는 코드다. 순서가 잘못돼 데이터를 잃을 수 있는 줄은?",
+      "code": "final plain = await Hive.openBox(name);\nfinal data = Map.of(plain.toMap());\nawait plain.close();\nawait secrets.write('hive_box_encrypted.$name', '1');\nawait Hive.deleteBoxFromDisk(name);\nfinal box = await Hive.openBox(name, encryptionCipher: cipher);\nawait box.putAll(data);",
+      "answer_lines": [4],
+      "explain": "'암호화 완료' 표식은 맨 마지막에 써야 한다. 표식을 먼저 쓰고 putAll 전에 앱이 죽으면, 다음 실행은 이미 옮겼다고 믿고 빈 암호화 박스를 연다. 평문 파일은 지워졌으므로 데이터가 사라진다."
+    },
+    {
+      "id": "q3",
+      "type": "scenario",
+      "section": "주의 — 복구 정책이 데이터 손실이다",
+      "situation": "암호화 키를 잃었거나 박스 파일이 깨졌을 때 '박스를 비우고 새로 시작'하는 복구 코드를 넣으려 한다. 이 정책을 모든 박스에 똑같이 적용해도 되는가? 어떤 박스에는 되고 어떤 박스에는 안 되는지 답하라.",
+      "rubric": [
+        "모든 박스에 똑같이 적용하면 안 된다고 답했다",
+        "다시 만들 수 있는 데이터(캐시, 알림 원문)는 비워도 된다고 구분했다",
+        "사용자 대화 기록·설정은 백업하거나 사용자에게 알린 뒤 비워야 한다고 썼다"
+      ],
+      "explain": "'비우고 새로 시작'은 앱이 죽는 것보다 낫지만 그 박스의 기록이 전부 사라진다. 다시 만들 수 있는 박스인지가 기준이다."
+    }
+  ]
+}

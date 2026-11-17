@@ -1,0 +1,30 @@
+[
+  {
+    "label": "내부 경로",
+    "regex": "[A-Za-z]:\\\\(Users|Coding_BackUp)\\\\(?!<)"
+  },
+  {
+    "label": "내부 경로",
+    "regex": "OneDrive[\\\\/]"
+  },
+  {
+    "label": "계정 이름",
+    "regex": "YOUR_ACCOUNT_NAME"
+  },
+  {
+    "label": "이메일",
+    "regex": "[\\w.+-]+@[\\w-]+\\.[A-Za-z]{2,}"
+  },
+  {
+    "label": "키 형식",
+    "regex": "AIza[0-9A-Za-z_-]{20,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY"
+  },
+  {
+    "label": "환경변수 값",
+    "regex": "^[A-Z][A-Z0-9_]{2,}=(?![\"']?[A-Za-z]:[\\\\/])(?![\"']?[/~$%])\\S{8,}"
+  },
+  {
+    "label": "의뢰 관련",
+    "regex": "크몽|의뢰인"
+  }
+]

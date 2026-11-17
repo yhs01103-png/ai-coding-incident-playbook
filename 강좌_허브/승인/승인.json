@@ -1,0 +1,292 @@
+{
+  "1대N_확장_배지_대표엔티티_드릴다운_패턴": {
+    "hash": "011ee1d69d8ef7bb163d0224e12d6ee5c8de1ee6ebcdd337498bcd47d62341c7",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "CLAUDE_md_임포트_전개_미검증_위험_패턴": {
+    "hash": "8b623280aedf458c48f7293abac48db0be487299d7d5540adb3ffee529ade018",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Claude_Code_프로젝트규칙_인덱싱_패턴": {
+    "hash": "47716539d786c7dc8f09853eab6a507f3f3a6327fcaaf96dceba329a81ddb572",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Dart_이름있는매개변수_후행쉼표_위치_함정": {
+    "hash": "0ec71400263a24418fbb80d866ee79bc152481ae2005067ec4cc8eaa763b15e1",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "FastAPI_dependency_예외_에러버블링_사각지대_패턴": {
+    "hash": "30c2325e7205fc5ef7473d6eeaba720830f6115c361a7e3302a6530e33df55cb",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "FastAPI_http미들웨어_연결끊김_차단_취소무력화_함정": {
+    "hash": "6e557e973cd9a3c08ad637e956a05239c0aac8d2dfe913f8ada16347cf408757",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Flutter_시크릿_에셋번들_노출_방지_패턴": {
+    "hash": "45266e9df915c3ce0027108e9fd9771030c08ec3bfd8d54746b672801baddc77",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Flutter_실기기_adb_탭_스크린샷_자동검증_절차": {
+    "hash": "cfdcaf051ecb6ce3e29a411aeefbebd81c9d49336c34991116307dfd19c59fa7",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Flutter웹_첫화면멈춤_dartio_조건부import_가벼운웹분리_판단": {
+    "hash": "70f66b39002a89c7bd646073d1d8d0edd56327128a659dde849f2011af9c1d10",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Hive_암호화는_값만_키는_평문_함정_평문박스_1회이전_패턴": {
+    "hash": "7561cd7510469e4579579fb2ff6d5f9bfc3b2fbbfe9210e642b74f8014ecf60e",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "LLM_JSON응답_간헐해석실패_JSON모드_내용없는_진단로그_패턴": {
+    "hash": "2a31a199e5a4f5c46d4b10d749d438c29fc9d5b7e293ab083c8866cf1861784b",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "LLM_블라인드_서브에이전트_자기일관성_측정_패턴": {
+    "hash": "970a49d93e512f0c26cf5c61840247e6f07fadac3d7ca0ca4947582cd86c44f0",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "LLM_파이프라인_안정성_패턴": {
+    "hash": "87d971a96fde9e59b906875f279898ca9f3aee7ed3c7a081028cf901f2609722",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "LLM_하루예산_단위당실측_절대상한_무료총량_패턴": {
+    "hash": "2306f2026ac43bc8942a72862575aa7bb8a2bdcce662f06f199373024d9e3bed",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Linux_홈서버_Docker_운영_함정": {
+    "hash": "470f5d9ed88b91b400f28db1afdd293dc0d5218485480cdfdc0c19f74fe2f6e9",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "MCP_Tool_Prompt_선택_completion_활용_패턴": {
+    "hash": "28e626ca3c8ce9dbe6ab092c6eab16deca9498c425014da263578f52422a562c",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "PowerShell_5_1_조용히_틀리는_함정_모음": {
+    "hash": "8a00491054cbdc736d40cefda8b39cc9229f3fb7b81152bb8fc1d94a3b2cfee8",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Python_stdlib_이름충돌_함정": {
+    "hash": "ff0fbe2aaca0be2968107ce5b881d1e5869d73183b94d5befebeea8693f4ef5c",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Riverpod_autoDispose_initState_read_로드_즉시폐기_함정": {
+    "hash": "08d9c62ea00f2c40382bbf799db2c44ecc8344f23d2d5a4f953845a68dfafaa2",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Windows_DPAPI_로컬_비밀저장소_마스터비번_엔트로피_복원경로_패턴": {
+    "hash": "aac54d06ba863f801b89b53518e8b99ab18d856f0766dc89147251df7606e0e0",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Windows_배치파일_한글_유니코드_인코딩_함정": {
+    "hash": "ab02ce8fec003a2e143f99ed3cf4deff04838125b6b5d8c52f62a0d7c189edcc",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "git_이력재작성_filter_branch_작업트리_파일삭제_함정": {
+    "hash": "4b795a7688d93f94642b3e89ed1e3842c20c5eb34222e51326cac599e55bd031",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "개발자콘솔_정적셸_세션토큰_로테이션_원문비포함_패턴": {
+    "hash": "0621a603c23aa840e07900782750856959ada549a798cd228bc2f3edea65d583",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "개인용_로컬도구_상용화전환_패턴": {
+    "hash": "0f3632ed9cef3733e03add8afa60f26fa81c28450e56d7f9c3fc53fe59c45001",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "게이트_실패시_열림_패턴": {
+    "hash": "20cf446ac320c0498999aaceb93d772a9961a861a865dc0ed0ceed28d0d6416c",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "결정성게이트_제거_숨은결정론_상실_함정": {
+    "hash": "247ec8d211fe05924b5444640a7ee8eb2b04c8744269d01450d5c781546e73f7",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "공유계약_오케스트레이션_경유_접근_패턴": {
+    "hash": "314d978799d452d93fe14f9a9e5740c2fe7600f9ef3abc7a31c91e50c1b183b6",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "공유상수_재사용_캐스케이드_함정": {
+    "hash": "78a384ab5c25cb0ef9855c9a34c76cfe4b49e257336be7df3eb2e97449d7a8c9",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "공유파일_레지스트리_동시쓰기_OCC_재시도_패턴": {
+    "hash": "eddc38b79ca61ac1bc71f03e40e1defd64c9fb97402f9bf1c542da078316c178",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "다중클라이언트_규칙은_서버한곳_게임판정_도우미대사_패턴": {
+    "hash": "6ed21b0f50574783c9eaabb13ac7248d98349e169bfbea4fb740b107773eb26a",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "다중클래스_유사블록_반복치환_경계혼동_함정": {
+    "hash": "91c3160deabcbce1eb1c6b4e7c7a1ae590f82e364e24ee479e1a0ce4a083e92e",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "데이터이전_검증_부분문자열존재확인_거짓통과_원본삭제전_양방향대조_패턴": {
+    "hash": "3f8a77eae4c91e79390940ab18d2634fef68e29f3221af8035069895e16432b0",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "동시요청_인증복구_가입중복_단일실행_세션번호_패턴": {
+    "hash": "cfc1d7f218f172ae49be6703333b15e7b031b6768debaf6a68801e36b0ad7593",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "문서_전역화_프로젝트특정_잔재_함정": {
+    "hash": "3ed20d40e17017a73ab3763b43e7b6380cc72747c25d8b8fa37770228b554b89",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "백엔드_필드추가_클라이언트_소비누락_감사_패턴": {
+    "hash": "e9c209c8a824c4c8691098478e91c14b817a0bf98c12c676e95d508184286383",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "사용자입력양식_1파일1항목_스키마검증_부분수용_가져오기_패턴": {
+    "hash": "b5122c6787f9f9971209f93d64f34614c20a1bba50cbb3ec57dde86d54ce5a12",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "사용자피드백_예측확률_보정루프_입력정화_사후평균_동의연동_패턴": {
+    "hash": "5ae2187d23f2eddda65f41c1511dc1e47fa24286543f209e12149d75cadb3cf8",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "서버거절규칙_롤아웃_앱먼저_시즌경계_튜닝값비저장_원칙": {
+    "hash": "5c2faef5e36edae0db0ff7dd26637141fa4fb5174000d4945e3f04cb5ee80190",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "서브에이전트_보고사실_실행전_재검증_패턴": {
+    "hash": "8330e8f01f23d1ba6fbdf074d314c4b77ad3a11f058c45bddfa6f5fac67a75df",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "소비형_선충전_지갑_스토어결제_환불회수_패턴": {
+    "hash": "3be9857a389ac96adcfe8bad079f9f0484999d5bdc4d3f4586d1e0f1c05664cc",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "실시계_만료판정_테스트_고정날짜_픽스처_시한폭탄_함정": {
+    "hash": "885e8dd00463d25534e09c8e83f7ff7c929f096f52d107ebdf010cbec0813bc2",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "앱계산_배지_테마팩_해금_서버없는_게임화_패턴": {
+    "hash": "3d3412ff30ab13c8be432537aa20258156cd0fd3bc73c572f2d201f183a1267b",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "운영값_덮어쓰기_파일_새키_누락_기본값추락_함정": {
+    "hash": "5b38f0f016cdf5a6e3e56ad8015de6c0b2a35aa3de26ab5d242990ddacb183c5",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "인프라_실제용량_맞춤_설계_패턴": {
+    "hash": "582eae402f707e887e0104f14e350c8ac9d3ecd427cd290c2efcc8a7cc10c56e",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "자동로드_문서_비대화_파일단위_이관_패턴": {
+    "hash": "f84026795298de233725db8c4db79bf104b86065e7d7dd356b132f83ad27b601",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "적립장부만_먼저_만들고_지급을_사용처몫으로_미루면_영영_미지급_함정": {
+    "hash": "575398470be344f22c23cd83c341a67503631bbaa570c21dad93140f481bcc4b",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "전역_값풀_개인정보_화이트리스트_k명노출_자동완성_패턴": {
+    "hash": "5f94a7060f2e55ae009106ae4390d443ec2158cc0a5ad01128c93c83ff815f4b",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "크로스런타임_계약_동기화_위험": {
+    "hash": "6e72c21ba3810da07d493b82ef2414e875a1664084355cba7619b490aabace44",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "타입체커_ORM쿼리결과_오탐_패턴": {
+    "hash": "33b83faf68bb7d08bc81508593615d6f5cb895550ccc938a2eac758dabb3fb1c",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "파이썬_패키지_getattr_monkeypatch_고정_함정": {
+    "hash": "720fc662b9eda1171d0e7ec57c84641fc3c4fa59eb2eb1ce95d3d154917328bb",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "포크_앱_공유파일_갈라짐_점검_패턴": {
+    "hash": "4bfb8ba977ac755126fab0e6026cabac5c50a848ff217f08098d9bcfda4cbb9f",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "폴더명_레이어명_불일치_사각지대_패턴": {
+    "hash": "aad5f754dfbf815e8bca4b11988b0c8b6e345b972fed2b409ebad93199993f05",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "현재상태_이력스냅샷_분리_백필_설계_패턴": {
+    "hash": "2da836f6520917ae850a0b9717b91b5ae1d2410757eff0df8e47f6c6101b03be",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "후속확인_로컬알림_기본켬_기록률측정_패턴": {
+    "hash": "46fde1f534a9a21d3ef8a4c4b6292b145b3bc8b1671c019aa973bb3c1de69e1d",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "Android_납품전_debug서명_allowBackup_점검_패턴": {
+    "hash": "a3ec9ca222bbe6ca4c4a85e6367256dc82fad9d8ecea7f0b8811848f9069a288",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "개발_서비스_폴더_분리_운영_패턴": {
+    "hash": "b7f0d03164dc463afe4df7704f689cd4e7a8f72a3f19599da61b044617d0ba5d",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "설정경로_환경변수_우선순위_폴백_패턴": {
+    "hash": "dfb77f7701dc3a1dbd2b7a6ffd7f67032143211c63ad9037043868ca610c3c0b",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  },
+  "코드기반_인프라분석_라이브검증_패턴": {
+    "hash": "8e8ad95c8bf9637a95140d8e3df74677258e4c7a3f608a161fa13675ee64e3e9",
+    "approved_at": "2026-11-17",
+    "kind": "doc"
+  }
+}
