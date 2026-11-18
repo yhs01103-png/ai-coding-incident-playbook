@@ -1,0 +1,56 @@
+{
+  "rule_id": "Riverpod_autoDispose_initState_read_로드_즉시폐기_함정",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "원인",
+      "situation": "TabBarView의 두 번째 탭이 무한 로딩이다. 서버 응답·파싱은 단독으로 정상이고 오류 로그도 없다. 부모 화면 initState의 postFrame에서 `ref.read(statsProvider.notifier).load()`를 부르고, statsProvider는 `StateNotifierProvider.autoDispose`다. 원인은?",
+      "options": [
+        "load()가 await되지 않아서",
+        "read는 구독이 아니어서 읽은 직후 리스너가 0개가 되고, autoDispose가 notifier를 버린 뒤 load()가 버려진 notifier에 값을 써서",
+        "TabBarView가 두 번째 탭을 너무 늦게 만들어서",
+        "서버 응답이 느려서"
+      ],
+      "answer": 1,
+      "explain": "그 시점에 statsProvider를 watch하는 위젯이 없었다(TabBarView는 보이는 탭만 만든다). 나중에 탭을 열면 watch가 새 notifier를 만들어 초기값(null) — 로딩이 영원히 계속된다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "해결",
+      "situation": "부모 화면 코드다. 이 provider를 살려 두는 장치가 빠져서 로드 결과가 버려지는 원인이 되는 줄을 고르세요.",
+      "code": "@override\nvoid initState() {\n  super.initState();\n  WidgetsBinding.instance.addPostFrameCallback((_) {\n    ref.read(statsProvider.notifier).load();\n  });\n}",
+      "answer_lines": [
+        5
+      ],
+      "explain": "로드를 거는 화면이 그 provider를 `ref.watch(statsProvider)`로 붙잡거나, 데이터를 쓰는 탭 자신이 load하게 해야 한다. watch가 곧 로드인 `FutureProvider.autoDispose`로 바꾸는 것도 방법이다. autoDispose를 빼는 건 마지막 수단이다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "해결",
+      "situation": "이 문제를 고치는 방법 중 '마지막 수단'으로 미뤄야 하는 것은?",
+      "options": [
+        "로드를 거는 화면에서 그 provider를 ref.watch로 붙잡는다",
+        "데이터를 쓰는 탭 위젯 자신이 initState에서 load한다",
+        "FutureProvider.autoDispose처럼 watch가 곧 로드인 형태로 바꾼다",
+        "provider에서 autoDispose를 뺀다"
+      ],
+      "answer": 3,
+      "explain": "autoDispose를 빼면 증상은 사라지지만 화면을 닫아도 상태가 메모리에 남는다. 구독 구조를 바로잡는 쪽이 원인을 고치는 방법이다."
+    },
+    {
+      "id": "q4",
+      "type": "scenario",
+      "section": "점검 grep",
+      "situation": "같은 함정이 코드베이스 다른 곳에도 있는지 한 번에 찾고 싶다. 검색 방법과 판정 기준을 쓰세요.",
+      "rubric": [
+        "`ref.read(`로 `.load(`를 부르는 곳을 찾는다고 썼다",
+        "그중 대상 provider가 `.autoDispose`인 것만 추린다고 썼다",
+        "같은 화면에 그 provider의 `ref.watch`가 있는지 확인한다고 썼다"
+      ],
+      "explain": "증상이 '조용한 무한 로딩'이라 로그로는 안 잡힌다. 세 조건(read로 load, autoDispose, watch 없음)이 겹치는 곳이 위험 지점이다."
+    }
+  ]
+}

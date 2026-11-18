@@ -1,0 +1,58 @@
+{
+  "rule_id": "Linux_홈서버_Docker_운영_함정",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "함정 1 — UFW로 포트를 막아도 Docker가 `-p host:port`로 발행한 포트는 안 막힘",
+      "situation": "Postgres 컨테이너를 -p 5432:5432로 띄웠다. sudo ufw delete allow 5432로 규칙을 지웠는데 외부에서 여전히 접속된다. 원인과 해결로 맞는 것은?",
+      "options": [
+        "UFW를 reload하지 않아서다 — sudo ufw reload로 해결된다",
+        "Docker가 FORWARD/DOCKER 체인에 자기 규칙을 넣고 UFW는 INPUT 체인만 다룬다 — 컨테이너를 -p 127.0.0.1:5432:5432로 재생성한다",
+        "ufw deny 5432 규칙을 추가로 넣으면 막힌다",
+        "컨테이너를 재시작하면 UFW 규칙이 적용된다"
+      ],
+      "answer": 1,
+      "explain": "포워딩된 트래픽은 FORWARD 체인을 타서 UFW 규칙이 아예 적용되지 않는다. 설정 실수가 아니라 구조 문제라, 호스트 바인딩을 로컬로 제한하는 것이 해결이다. 볼륨을 그대로 쓰면 재생성해도 데이터는 남는다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "함정 1 — UFW로 포트를 막아도 Docker가 `-p host:port`로 발행한 포트는 안 막힘",
+      "situation": "같은 볼륨을 유지한 채 컨테이너를 로컬 전용으로 재생성하려는 명령이다. 의도와 다르게 여전히 외부에 열리게 만드는 줄을 고르세요.",
+      "code": "docker rm -f pg\ndocker run -d --name pg \\\n  -p 5432:5432 \\\n  -v pgdata:/var/lib/postgresql/data \\\n  postgres:16",
+      "answer_lines": [
+        3
+      ],
+      "explain": "호스트 주소를 생략하면 모든 인터페이스에 바인딩된다. -p 127.0.0.1:5432:5432로 써야 외부에서 물리적으로 접근할 수 없다. 원격 접속이 필요하면 SSH 역터널로 우회한다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "함정 1 — UFW로 포트를 막아도 Docker가 `-p host:port`로 발행한 포트는 안 막힘",
+      "situation": "같은 서버에 --network host로 띄운 컨테이너도 있다. 이 컨테이너에 대한 UFW 규칙은?",
+      "options": [
+        "-p 컨테이너와 똑같이 UFW가 적용되지 않는다",
+        "일반 프로세스처럼 INPUT 체인을 타므로 UFW 규칙이 그대로 적용된다",
+        "host 모드 컨테이너는 외부에서 아예 접근할 수 없다",
+        "DOCKER 체인을 직접 수정해야만 막힌다"
+      ],
+      "answer": 1,
+      "explain": "UFW 우회는 포트 발행(-p) 방식에만 해당한다. 방화벽이 정상 작동하는지는 컨테이너의 네트워크 모드에 따라 다르므로 모드를 먼저 확인하고 판단한다."
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "section": "함정 2 — `docker run -e PASSWORD='...'`에서 `!`가 든 비밀번호가 bash 히스토리 확장으로 깨짐",
+      "situation": "대화형 bash 터미널에서 docker run -e POSTGRES_PASSWORD=...에 비밀번호를 직접 넣는다. 히스토리 확장 문제와 접속 URL 구분자 충돌을 함께 피하는 방법은?",
+      "options": [
+        "비밀번호를 큰따옴표로 감싼다",
+        "비밀번호를 영숫자(hex 문자열 등)로만 정한다",
+        "비밀번호 앞에 공백을 하나 넣는다",
+        "같은 명령을 두 번 실행한다"
+      ],
+      "answer": 1,
+      "explain": "큰따옴표 안에서도 대화형 bash는 !를 히스토리 확장으로 해석한다. 영숫자만 쓰면 이 함정과 postgresql://user:pass@host/db의 #·@ 충돌을 함께 피한다. 그 밖에 set +H로 그 세션만 끄거나, 컨테이너 안 psql에서 ALTER USER로 재설정하는 방법이 있다."
+    }
+  ]
+}

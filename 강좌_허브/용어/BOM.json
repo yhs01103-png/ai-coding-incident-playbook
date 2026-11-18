@@ -1,0 +1,12 @@
+{
+  "id": "BOM",
+  "term": "BOM",
+  "category": "언어·프레임워크",
+  "short": "파일 맨 앞에서 인코딩을 알려 주는 표식 바이트",
+  "explain": "Byte Order Mark. Windows PowerShell 5.1 같은 오래된 도구는 BOM이 없는 UTF-8 파일을 시스템 기본 인코딩으로 읽어 한글이 조용히 깨진다.",
+  "aliases": [],
+  "rules": [
+    "Windows_배치파일_한글_유니코드_인코딩_함정",
+    "PowerShell_5_1_조용히_틀리는_함정_모음"
+  ]
+}

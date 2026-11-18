@@ -1,0 +1,11 @@
+{
+  "id": "MCP",
+  "term": "MCP",
+  "category": "AI·LLM",
+  "short": "AI 도구가 외부 프로그램 기능을 표준 방식으로 쓰게 하는 규약",
+  "explain": "Model Context Protocol. 서버가 도구(Tool)·프롬프트(Prompt)·자료(Resource)를 내놓으면 AI 클라이언트가 같은 방식으로 불러 쓴다. Tool은 AI가 고르고 Prompt는 사용자가 고른다.",
+  "aliases": [],
+  "rules": [
+    "MCP_Tool_Prompt_선택_completion_활용_패턴"
+  ]
+}

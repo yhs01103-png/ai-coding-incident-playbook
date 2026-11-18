@@ -5,7 +5,8 @@ import json
 
 
 def render(template: str, rules: list[dict], quizzes: dict, status: dict, quiz_status: dict,
-           public_only: bool, course_link: str, projects: list[dict] | None = None, method: str = "") -> str:
+           public_only: bool, course_link: str, projects: list[dict] | None = None, method: str = "",
+           terms: list[dict] | None = None) -> str:
     out_rules = []
     for r in rules:
         public = status.get(r["id"], {}).get("status") == "approved"
@@ -32,8 +33,11 @@ def render(template: str, rules: list[dict], quizzes: dict, status: dict, quiz_s
             "milestones": [{**m, "rules": [r for r in m.get("rules", []) if r in kept]} for m in p.get("milestones", [])],
         })
     show_method = method if (not public_only or approved("project:_기록방식")) else ""
+    # 용어는 "term:<id>" 키로 승인된다.
+    out_terms = [{**t, "public": approved(f"term:{t['id']}"), "rules": [r for r in t.get("rules", []) if r in kept]}
+                 for t in terms or [] if not public_only or approved(f"term:{t['id']}")]
     data = {"rules": out_rules, "quizzes": out_quizzes, "course_link": course_link, "public_only": public_only,
-            "projects": out_projects, "method": show_method}
+            "projects": out_projects, "method": show_method, "terms": out_terms}
     # 본문에 "</script>"가 있어도 스크립트 블록을 빠져나가지 못하게 "</"를 이스케이프한다.
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     return template.replace("/*__DATA__*/", payload)

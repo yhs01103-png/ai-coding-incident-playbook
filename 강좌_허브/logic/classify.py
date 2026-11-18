@@ -80,6 +80,28 @@ def apply_tag_overrides(rules: list[dict], overrides: dict) -> list[str]:
     return errs
 
 
+SHORT_MAX = 30
+
+
+def auto_short_title(title: str) -> str:
+    """짧은제목.json에 없을 때의 기본값: "(범용)"을 떼고 " — " 앞까지."""
+    return title.replace("(범용)", "").split(" — ")[0].strip()
+
+
+def apply_short_titles(rules: list[dict], overrides: dict) -> list[str]:
+    """짧은제목.json({규칙 id: 짧은 제목})이 자동 짧은 제목을 바꾼다. 없는 규칙·너무 긴 제목은 오류."""
+    by_id = {r["id"]: r for r in rules}
+    errs = []
+    for rid, short in overrides.items():
+        if rid not in by_id:
+            errs.append(f"짧은제목: 없는 규칙 {rid!r}")
+        elif not short.strip() or len(short) > SHORT_MAX:
+            errs.append(f"짧은제목: {rid} — 1~{SHORT_MAX}자가 아님 ({len(short)}자)")
+        else:
+            by_id[rid]["short"] = short
+    return errs
+
+
 def link_project_rules(project: dict, rules: list[dict]) -> tuple[list[str], list[dict]]:
     """실측 = 사례에 이 프로젝트가 나오는 규칙. 적용 가능 = 실측이 아니면서 스택 태그가 겹치는 규칙(많이 겹치는 순)."""
     real = sorted(r["id"] for r in rules if project["id"] in r.get("projects", []))

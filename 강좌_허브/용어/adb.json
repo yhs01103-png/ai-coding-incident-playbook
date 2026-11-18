@@ -1,0 +1,12 @@
+{
+  "id": "adb",
+  "term": "adb",
+  "category": "테스트·검증",
+  "short": "PC에서 안드로이드 기기를 명령으로 조작하는 도구",
+  "explain": "Android Debug Bridge. 앱 설치·화면 탭·스크린샷·로그 보기를 명령 한 줄로 한다. 사람이 손으로 하던 실기기 확인을 같은 순서로 반복 실행할 수 있게 해 준다.",
+  "aliases": [],
+  "rules": [
+    "Flutter_실기기_adb_탭_스크린샷_자동검증_절차",
+    "Android_납품전_debug서명_allowBackup_점검_패턴"
+  ]
+}

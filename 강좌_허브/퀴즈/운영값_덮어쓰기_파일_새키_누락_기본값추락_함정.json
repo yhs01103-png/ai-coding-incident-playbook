@@ -1,0 +1,57 @@
+{
+  "rule_id": "운영값_덮어쓰기_파일_새키_누락_기본값추락_함정",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "원인",
+      "situation": "rules.py의 한도 표 `{\"free\": 10, \"paid\": 50}`에 `\"guest\": 2`를 추가했다. 서비스 폴더의 rules_values.py는 같은 이름의 표를 통째로 교체한다. 조회는 `표.get(등급, 표[\"free\"])`다. 운영에서 guest는 몇 회를 받나?",
+      "options": [
+        "2회",
+        "10회",
+        "50회",
+        "KeyError로 서버가 멈춘다"
+      ],
+      "answer": 1,
+      "explain": "교체된 표에는 guest 키가 없어서 get이 에러 없이 free 값(10)으로 떨어진다. 개발 폴더 시험은 운영 값 파일을 못 보니 통과한다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "원인",
+      "situation": "등급별 한도를 조회하는 코드다. 빠진 키를 조용히 다른 값으로 바꿔 버리는 줄을 고르세요.",
+      "code": "def daily_limit(tier: str) -> int:\n    table = rules.DAILY_LIMIT\n    if tier not in KNOWN_TIERS:\n        raise ValueError(tier)\n    return table.get(tier, table[\"free\"])",
+      "answer_lines": [
+        5
+      ],
+      "explain": "알려진 등급인데도 표에 키가 없으면 free 값으로 폴백한다. 운영 값 파일에 새 키가 빠진 사실이 숨는다. `table[tier]`로 바로 실패하게 하거나, 운영 값을 얹은 상태에서 짝 테스트를 돌려야 드러난다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "지침",
+      "situation": "운영 값 적용 함수가 rules.py에 없는 이름을 거부(AttributeError)하게 만들었다. 이것만으로 막지 못하는 실수는?",
+      "options": [
+        "운영 값 파일에 오타 난 상수 이름",
+        "rules.py에서 지운 상수를 운영 파일이 계속 설정",
+        "rules.py에 새로 만든 키를 운영 값 파일에 넣지 않은 것",
+        "운영 값 파일의 문법 오류"
+      ],
+      "answer": 2,
+      "explain": "이름 거부는 오타·삭제를 잡지만 '빠진 키'는 못 잡는다. 그래서 짝 테스트(기본값 단언)를 운영 값을 얹은 상태에서도 돌리는 게이트가 필요하다."
+    },
+    {
+      "id": "q4",
+      "type": "scenario",
+      "section": "지침",
+      "situation": "새 등급과 새 상수를 추가하는 작업을 승격(개발 → 서비스) 전에 마무리하려 한다. 작업 안에서와 승격 게이트에서 각각 무엇을 해야 하는지 쓰세요.",
+      "rubric": [
+        "같은 작업 안에서 운영 값 파일에도 새 키·상수를 넣는다고 썼다",
+        "grep으로 새 이름이 constraints의 두 파일에 모두 있는지 확인한다고 썼다",
+        "짝 테스트를 서비스 폴더(운영 값을 얹은 상태)에서 한 번 더 돌린다고 썼다",
+        "새 등급 전용 테스트에 '운영 값에서 그 등급 값이 기본 등급과 달라야 함'을 단언한다고 썼다"
+      ],
+      "explain": "개발 폴더 테스트가 운영 값을 못 본다는 것 자체가 맹점이다. 서비스 폴더에서 한 번 더 도는 단계가 이 사례를 실제로 잡았다."
+    }
+  ]
+}

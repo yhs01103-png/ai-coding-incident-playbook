@@ -14,6 +14,9 @@ import build
 from pathlib import Path
 
 from approve import approve_ids, snapshot_path
+from logic.export import export_item, parts_of
+
+EXPORT_DIR = build.HUB / "내보내기"  # 로컬 전용 — 패키지 화이트리스트에 없어서 공개본에 안 담긴다
 
 FONT = "Malgun Gothic"
 MONO = "Consolas"
@@ -24,22 +27,38 @@ C = {
     "add_bg": "#e3f5e9", "del_bg": "#fde8e8", "hit_bg": "#fff3c4", "code_bg": "#f1f3f6",
 }
 STATUS_KO = {"approved": "공개", "pending": "승인 대기", "stale": "바뀜·재승인", "blocked": "금지어 막힘"}
+# 승인 단위 탭: 키 앞머리로 나눈다. 규칙은 앞머리가 없다.
+TABS = [("rule", "규칙"), ("project", "프로젝트"), ("quiz", "퀴즈"), ("term", "용어")]
+
+
+def kind_of(key: str) -> str:
+    return key.split(":", 1)[0] if ":" in key else "rule"
 
 
 def load_rows() -> list[dict]:
     status = build.publish_status()
     approvals = build.load_json(build.APPROVALS_FILE, {})
     quizzes = build.quiz_status(status)
+    rules = {}
+    for f in build.OUT_DIR.glob("*.json"):
+        rules[f.stem] = json.loads(f.read_text(encoding="utf-8"))
     rows = []
     for doc_id, s in status.items():
         src = Path(s["path"])
-        text = src.read_text(encoding="utf-8")
-        if doc_id.startswith("project:"):  # 프로젝트 카드·기록 방식 — 화면에서 구분되게 이름 앞에 표시
-            card = json.loads(text) if src.suffix == ".json" else {}
-            rule = {"title": "[프로젝트] " + card.get("name", src.stem)}
+        text = s["text"]
+        kind = kind_of(doc_id)
+        name = doc_id.split(":", 1)[-1]
+        if kind == "project":  # 프로젝트 카드·기록 방식
+            card = json.loads(text) if src.suffix == ".json" else {"method": text}
+            rule, data = {"title": card.get("name", "결정 기록 방식")}, card
+        elif kind == "quiz":
+            data = json.loads(text)
+            rule = {"title": f"{rules.get(name, {}).get('short', name)} — {len(data.get('questions', []))}문제"}
+        elif kind == "term":
+            data = json.loads(text)
+            rule = {"title": f"{data.get('term', name)} — {data.get('short', '')}"}
         else:
-            rule_file = build.OUT_DIR / f"{doc_id}.json"
-            rule = json.loads(rule_file.read_text(encoding="utf-8")) if rule_file.exists() else {}
+            rule = data = rules.get(doc_id, {})
         snap = snapshot_path(doc_id)
         old = snap.read_text(encoding="utf-8") if snap.exists() else None
         appr = approvals.get(doc_id)
@@ -52,9 +71,10 @@ def load_rows() -> list[dict]:
             plus, minus = sum(x.startswith("+ ") for x in d), sum(x.startswith("- ") for x in d)
             change = f"바뀜 +{plus} −{minus}"
         qfile = build.QUIZ_DIR / f"{doc_id}.json"
-        qcount = len(json.loads(qfile.read_text(encoding="utf-8")).get("questions", [])) if qfile.exists() else 0
+        qcount = len(json.loads(qfile.read_text(encoding="utf-8")).get("questions", [])) if kind == "rule" and qfile.exists() else 0
         rows.append({
-            "id": doc_id, "title": rule.get("title", doc_id), "status": s["status"], "hits": s["hits"],
+            "id": doc_id, "kind": kind, "data": data, "label": rule.get("short") or rule.get("title", name),
+            "title": rule.get("title", doc_id), "status": s["status"], "hits": s["hits"],
             "change": change, "updated": datetime.date.fromtimestamp(src.stat().st_mtime).isoformat(),
             "approved_at": (appr or {}).get("approved_at", "—"), "sections": len(rule.get("sections", [])),
             "kinds": Counter(x["kind"] for x in rule.get("sections", [])), "projects": rule.get("projects", []),
@@ -68,6 +88,7 @@ class HubApp:
         self.root = root
         self.rows: list[dict] = []
         self.checked: set[str] = set()
+        self.tab = "rule"
         self.last_build = "—"
         root.title("강좌 허브")
         self.k = max(1.0, root.winfo_fpixels("1i") / 96)  # 화면 배율(125%·150% 등)
@@ -95,6 +116,9 @@ class HubApp:
         st.configure("Ghost.TButton", font=(FONT, 10), background="#2c3245", foreground="#fff", padding=(12, 7), borderwidth=0)
         st.map("Ghost.TButton", background=[("active", "#3a4158")])
         st.configure("TCombobox", padding=4)
+        st.configure("TNotebook", background=C["bg"], borderwidth=0)
+        st.configure("TNotebook.Tab", font=(FONT, 10, "bold"), padding=(16, 7), background="#e6e8ee", foreground=C["sub"])
+        st.map("TNotebook.Tab", background=[("selected", C["panel"])], foreground=[("selected", C["accent"])])
 
     def _header(self):
         h = tk.Frame(self.root, bg=C["head"], padx=20, pady=14)
@@ -125,6 +149,12 @@ class HubApp:
         pane.pack(fill="both", expand=True, padx=20, pady=(0, 8))
 
         left = tk.Frame(pane, bg=C["bg"])
+        # 탭은 표를 거르는 역할만 한다(표·상세 화면은 하나). 탭 이름에 대기 수를 붙인다.
+        self.nb = ttk.Notebook(left)
+        self.nb.pack(fill="x", pady=(0, 6))
+        for key, _ in TABS:
+            self.nb.add(tk.Frame(self.nb, height=1, bg=C["bg"]), text=key)
+        self.nb.bind("<<NotebookTabChanged>>", lambda _: self.switch_tab())
         bar = tk.Frame(left, bg=C["bg"])
         bar.pack(fill="x", pady=(0, 6))
         tk.Label(bar, text="검색", font=(FONT, 9), fg=C["sub"], bg=C["bg"]).pack(side="left", padx=(0, 6))
@@ -172,6 +202,19 @@ class HubApp:
         self.d_meta.pack(fill="x", pady=(4, 0))
         self.d_legend = tk.Label(top, text="", font=(FONT, 9), fg=C["sub"], bg=C["panel"], anchor="w")
         self.d_legend.pack(fill="x", pady=(4, 0))
+        # JSON 내보내기: 이 항목 안에서 절·문제·전환점을 골라 복사하거나 파일로 저장(AI·검색에 상의할 때)
+        ex = tk.Frame(top, bg=C["panel"])
+        ex.pack(fill="x", pady=(8, 0))
+        head = tk.Frame(ex, bg=C["panel"])
+        head.pack(fill="x")
+        tk.Label(head, text="JSON 내보내기 — 고르지 않으면 전체", font=(FONT, 9, "bold"), fg=C["sub"], bg=C["panel"]).pack(side="left")
+        for label, cmd in (("파일로 저장", self.export_save), ("JSON 복사", self.export_copy), ("전체 선택", self.parts_all)):
+            ttk.Button(head, text=label, style="Ghost.TButton", command=cmd).pack(side="right", padx=(4, 0))
+        self.parts = tk.Listbox(ex, selectmode="multiple", height=5, font=(FONT, 9), activestyle="none", exportselection=False,
+                                relief="flat", bg=C["code_bg"], fg=C["ink"], selectbackground="#dbe4ff", selectforeground=C["ink"],
+                                highlightthickness=0)
+        self.parts.pack(fill="x", pady=(4, 0))
+        self.part_keys: list[str] = []
         self.text = tk.Text(right, wrap="word", font=(FONT, 10), bg=C["panel"], fg=C["ink"], relief="flat",
                             padx=16, pady=8, spacing1=2, spacing3=2, borderwidth=0)
         tsb = ttk.Scrollbar(right, orient="vertical", command=self.text.yview)
@@ -199,7 +242,16 @@ class HubApp:
     def reload(self):
         self.rows = load_rows()
         self.checked &= {r["id"] for r in self.rows if r["status"] in ("pending", "stale")}
+        for i, (key, label) in enumerate(TABS):
+            mine = [r for r in self.rows if r["kind"] == key]
+            todo = sum(r["status"] in ("pending", "stale") for r in mine)
+            self.nb.tab(i, text=f"{label} {len(mine)}" + (f" · 대기 {todo}" if todo else ""))
         self.fill_stats()
+        self.fill_table()
+
+    def switch_tab(self):
+        self.tab = TABS[self.nb.index("current")][0]
+        self.checked.clear()  # 다른 탭에서 고른 것이 보이지 않은 채 승인되지 않게
         self.fill_table()
 
     def fill_stats(self):
@@ -207,7 +259,7 @@ class HubApp:
             w.destroy()
         n = Counter(r["status"] for r in self.rows)
         kinds = sum((r["kinds"] for r in self.rows), Counter())
-        self._card("규칙 문서", str(len(self.rows)))
+        self._card("승인 단위", str(len(self.rows)))
         self._card("공개", str(n["approved"]), C["approved"])
         self._card("승인 대기", str(n["pending"]), C["pending"])
         self._card("바뀜·재승인", str(n["stale"]), C["stale"])
@@ -219,7 +271,9 @@ class HubApp:
     def visible_rows(self):
         q, flt = self.q.get().strip(), self.filter.get()
         for r in self.rows:
-            if q and q not in r["id"] and q not in r["title"]:
+            if r["kind"] != self.tab:
+                continue
+            if q and q not in r["id"] and q not in r["title"] and q not in r["label"]:
                 continue
             if flt == "승인 대상" and r["status"] not in ("pending", "stale"):
                 continue
@@ -235,7 +289,7 @@ class HubApp:
             selectable = r["status"] in ("pending", "stale")
             chk = ("☑" if r["id"] in self.checked else "☐") if selectable else ""
             self.tree.insert("", "end", iid=r["id"], tags=(r["status"],), values=(
-                chk, r["id"], STATUS_KO[r["status"]], r["change"], r["updated"], r["approved_at"],
+                chk, r["label"], STATUS_KO[r["status"]], r["change"], r["updated"], r["approved_at"],
                 r["sections"], r["quiz"] or "", len(r["hits"]) or ""))
         if keep and self.tree.exists(keep[0]):
             self.tree.selection_set(keep[0])
@@ -259,8 +313,14 @@ class HubApp:
         row = next((r for r in self.rows if sel and r["id"] == sel[0]), None)
         if not row:
             return
-        self.d_title.configure(text=row["title"])
-        meta = [f"공개 상태  {STATUS_KO[row['status']]}", f"승인 뒤 변경  {row['change']}", f"수정일  {row['updated']}",
+        self.d_title.configure(text=row["label"])
+        self.parts.delete(0, "end")
+        parts = parts_of(row["kind"], row["data"])
+        self.part_keys = [k for k, _ in parts]
+        for _, label in parts:
+            self.parts.insert("end", label)
+        meta = [row["title"]] if row["kind"] == "rule" and row["title"] != row["label"] else []
+        meta += [f"공개 상태  {STATUS_KO[row['status']]}", f"승인 뒤 변경  {row['change']}", f"수정일  {row['updated']}",
                 f"승인일  {row['approved_at']}", f"절 {row['sections']}개"]
         if row["projects"]:
             meta.append("프로젝트  " + ", ".join(row["projects"]))
@@ -307,6 +367,44 @@ class HubApp:
             t.insert("end", ln + "\n", tuple(tags))
         t.configure(state="disabled")
         t.yview_moveto(0)
+
+    # ---------- 내보내기 ----------
+    def current_row(self):
+        sel = self.tree.selection()
+        return next((r for r in self.rows if sel and r["id"] == sel[0]), None)
+
+    def export_json(self) -> tuple[dict, str] | None:
+        row = self.current_row()
+        if not row:
+            messagebox.showinfo("JSON 내보내기", "왼쪽 표에서 항목을 먼저 고르세요.")
+            return None
+        picked = [self.part_keys[i] for i in self.parts.curselection()]
+        out = export_item(row["kind"], row["id"], row["data"], picked, row["status"], row["hits"])
+        return out, json.dumps(out, ensure_ascii=False, indent=2)
+
+    def parts_all(self):
+        self.parts.select_set(0, "end")
+
+    def export_copy(self):
+        got = self.export_json()
+        if not got:
+            return
+        out, text = got
+        self.root.clipboard_clear()
+        self.root.clipboard_append(text)
+        warn = f"\n\n주의: 금지어 {len(out['warnings'])}곳이 들어 있습니다 — 밖에 붙이기 전에 확인하세요." if out["warnings"] else ""
+        messagebox.showinfo("JSON 복사", f"{len(out['parts'])}개 부분을 클립보드에 복사했습니다.{warn}")
+
+    def export_save(self):
+        got = self.export_json()
+        if not got:
+            return
+        out, text = got
+        EXPORT_DIR.mkdir(exist_ok=True)
+        stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        f = EXPORT_DIR / f"{out['id'].replace(':', '__')}_{stamp}.json"
+        f.write_text(text, encoding="utf-8")
+        messagebox.showinfo("파일로 저장", f"저장했습니다.\n{f}")
 
     # ---------- 행동 ----------
     def run_build(self):

@@ -1,0 +1,71 @@
+{
+  "rule_id": "Windows_DPAPI_로컬_비밀저장소_마스터비번_엔트로피_복원경로_패턴",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "1. DPAPI 단독의 한계 두 가지",
+      "situation": "평문 비밀번호 txt를 ConvertFrom-SecureString(키 없이, DPAPI)으로 암호화해 바꿨다. 이 방식이 막지 못하는 것은?",
+      "options": [
+        "디스크 파일만 복사해 다른 PC로 가져간 사람",
+        "로그인된 채 방치된 PC에서 같은 Windows 계정으로 실행한 다른 프로세스",
+        "백업 USB를 주운 사람",
+        "다른 Windows 계정의 사용자"
+      ],
+      "answer": 1,
+      "explain": "DPAPI 단독은 '현재 사용자' 키로만 묶여, 같은 계정의 모든 프로세스가 비밀번호 없이 풀 수 있다. 또 계정·PC에 묶여 재설치나 이전 시 영영 안 열린다. 이 두 한계를 마스터 비밀번호 파생 엔트로피와 평문 복원 경로로 메운다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "2. 해결 구조 — 마스터 비밀번호에서 만든 키를 DPAPI의 추가 엔트로피로",
+      "situation": "마스터 비밀번호에서 만든 $key를 받아 값을 암호화하는 함수다. 마스터 비밀번호 없이도 같은 계정이면 풀리게 만드는 줄을 고르세요.",
+      "code": "function Enc([string]$s, [byte[]]$key) {\n    [Convert]::ToBase64String([Security.Cryptography.ProtectedData]::Protect(\n        [Text.Encoding]::UTF8.GetBytes($s), $null, 'CurrentUser'))\n}",
+      "answer_lines": [
+        3
+      ],
+      "explain": "Protect의 두 번째 인자(optionalEntropy)에 $key 대신 $null을 넘겨, 받은 키가 전혀 쓰이지 않는다. 엔트로피 없이 만든 값은 DPAPI만으로 풀리므로, '마스터 없이 DPAPI만으로 푸는 시도가 실패하는가'를 테스트에 넣어야 이런 실수를 잡는다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "3. 해제된 키의 수명 — 터미널 세션에 남기지 않는다",
+      "situation": "허브 스크립트가 해제한 키를 $global:VaultEntropy에 담아 하위 스크립트에 넘긴다. PowerShell 창에서 직접 실행하고 끝낸 뒤 같은 창에서 다시 실행하면 비밀번호를 묻지 않는다. 고치는 방법은?",
+      "options": [
+        "키를 $script: 범위로 옮긴다",
+        "허브 본문을 try로 감싸고 finally에서 $global:VaultEntropy = $null로 폐기한다",
+        "실행할 때마다 창을 새로 열라고 안내한다",
+        "키를 파일에 임시 저장했다가 지운다"
+      ],
+      "answer": 1,
+      "explain": "직접 실행하면 종료 후에도 터미널 세션에 전역 변수가 남는다. .cmd 래퍼로 새 powershell.exe를 띄우는 경로는 자동 소멸하므로, 두 경로를 모두 '두 번째 실행이 비번을 다시 묻는가'로 테스트한다."
+    },
+    {
+      "id": "q4",
+      "type": "scenario",
+      "section": "4. 형식 이전 · 비번 변경은 \"전부 검증한 뒤에만 쓰기\"",
+      "situation": "마스터 비밀번호 변경 기능을 만든다. 중간에 실패해도 저장소를 잃지 않는 절차를 쓰세요.",
+      "rubric": [
+        "메모리에서 전 항목 복호화 → 새 키로 재암호화 → 각 항목을 다시 복호화해 원문과 같은지 확인한다고 썼다",
+        "하나라도 틀리면 파일에 아무것도 쓰지 않고 중단한다고 썼다",
+        "통과하면 .tmp 파일에 먼저 쓰고 Move-Item -Force로 교체한다고 썼다",
+        "옛 형식 파일(.bak)을 남기지 않는다 — 남기면 마스터 없이 풀린다고 썼다"
+      ],
+      "explain": "형식 이전과 비번 변경은 같은 규칙이다. 전부 검증한 뒤에만 쓰고, 교체는 tmp를 거쳐 중간 실패 시 기존 파일이 유지되게 한다."
+    },
+    {
+      "id": "q5",
+      "type": "choice",
+      "section": "6. 테스트 함정",
+      "situation": "'\"비번\" | powershell -File vault.ps1'로 잠금 해제를 자동 테스트했더니 끝나지 않고 멈춘다. 원인과 맞는 대응은?",
+      "options": [
+        "파이프 인코딩 문제다 — -Encoding utf8을 붙인다",
+        "Read-Host -AsSecureString은 파이프를 읽지 않고 실제 콘솔을 기다린다 — 격리 복사본에서 입력 함수 한 줄만 치환해 돌린다",
+        "프로덕션 코드에 '환경변수가 있으면 그 값을 비번으로 쓰는' 테스트 훅을 넣는다",
+        "타임아웃을 늘린다"
+      ],
+      "answer": 1,
+      "explain": "일반 Read-Host는 파이프 입력을 먹지만 -AsSecureString은 콘솔을 기다린다. 프로덕션에 테스트 훅을 넣으면 그 자체가 우회 경로가 되므로, 복사본에서만 치환한다."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "rule_id": "Python_stdlib_이름충돌_함정",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "함정",
+      "situation": "프로젝트 루트에서 `python server/main.py`로 실행하면 enum·functools 초기화 단계에서 이상한 크래시가 나는데, pytest로는 재현되지 않는다. 최근 `server/types.py`를 추가했다. 가장 유력한 원인은?",
+      "options": [
+        "types.py 안에 문법 오류가 있어서",
+        "stdlib의 types 대신 프로젝트의 types.py가 먼저 잡혀 인터프리터 초기화가 깨져서",
+        "pytest가 다른 Python 버전을 써서",
+        "enum 모듈이 손상돼서"
+      ],
+      "answer": 1,
+      "explain": "sys.path 앞쪽에 프로젝트 디렉터리가 오는 실행 경로에서 내부 stdlib의 `from types import ...`가 프로젝트 파일로 잘못 연결된다. 실행 위치에 따라 재현 여부가 갈려 '내 컴퓨터에선 되는데'가 된다."
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "section": "함정",
+      "situation": "새 파일 이름으로 이 함정을 부를 위험이 있는 것은?",
+      "options": [
+        "server/schemas.py",
+        "server/queue.py",
+        "server/routes.py",
+        "server/models.py"
+      ],
+      "answer": 1,
+      "explain": "queue는 stdlib 모듈 이름이다. types·io·email·calendar·token 등도 같다. 파일을 새로 만들 때 stdlib 이름과 겹치는지 한 번 확인하는 것이 가장 싸다."
+    },
+    {
+      "id": "q3",
+      "type": "spot",
+      "section": "해법",
+      "situation": "이미 types.py를 여러 곳에서 import해서 이름을 못 바꾸고, 우회 코드를 넣었다. 이 우회가 진짜 stdlib을 가져오지 못하게 만드는 줄을 고르세요.",
+      "code": "import sys\n_saved = sys.path[0]\nsys.path.insert(0, _saved)\nimport types as _real_types\nsys.path.insert(0, _saved)",
+      "answer_lines": [
+        3
+      ],
+      "explain": "프로젝트 경로를 잠깐 빼야(`sys.path.pop(0)`) stdlib의 types가 잡힌다. 다시 넣으면 그대로 프로젝트 파일이 잡힌다. 이 우회는 증상만 피하는 것이라, 가능하면 파일 이름을 바꾸는 쪽을 우선한다."
+    }
+  ]
+}

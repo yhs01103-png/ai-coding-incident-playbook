@@ -1,0 +1,11 @@
+{
+  "id": "allowBackup",
+  "term": "allowBackup",
+  "category": "보안·개인정보",
+  "short": "안드로이드가 앱 데이터를 자동 백업하게 허용하는 설정",
+  "explain": "켜져 있으면 토큰·로컬 DB가 기기 백업에 실려 나갈 수 있다. 민감한 데이터를 저장하는 앱이면 끄거나 백업에서 뺄 파일 규칙을 정한다.",
+  "aliases": [],
+  "rules": [
+    "Android_납품전_debug서명_allowBackup_점검_패턴"
+  ]
+}

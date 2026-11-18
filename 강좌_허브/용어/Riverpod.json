@@ -1,0 +1,11 @@
+{
+  "id": "Riverpod",
+  "term": "Riverpod",
+  "category": "언어·프레임워크",
+  "short": "Flutter 상태 관리 라이브러리",
+  "explain": "상태를 provider 단위로 만들고 화면이 watch로 구독한다. 구독 없이 read로 한 번만 읽으면 화면이 그 상태를 붙잡고 있지 않아 생명주기 옵션과 부딪힐 수 있다.",
+  "aliases": [],
+  "rules": [
+    "Riverpod_autoDispose_initState_read_로드_즉시폐기_함정"
+  ]
+}

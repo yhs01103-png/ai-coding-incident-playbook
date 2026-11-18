@@ -1,0 +1,13 @@
+{
+  "id": "FastAPI_dependency",
+  "term": "FastAPI dependency",
+  "category": "언어·프레임워크",
+  "short": "FastAPI가 처리 함수 전에 실행해 결과를 넣어 주는 함수",
+  "explain": "인증 확인·DB 세션 같은 준비를 Depends(...)로 선언하면 FastAPI가 먼저 실행한다. 여기서 난 예외는 처리 함수 안의 try/except가 잡지 못하는 위치에서 터진다.",
+  "aliases": [
+    "Depends"
+  ],
+  "rules": [
+    "FastAPI_dependency_예외_에러버블링_사각지대_패턴"
+  ]
+}

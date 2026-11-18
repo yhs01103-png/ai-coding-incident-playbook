@@ -1,0 +1,71 @@
+{
+  "rule_id": "PowerShell_5_1_조용히_틀리는_함정_모음",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "함정 1 — 함수가 1요소 배열을 반환하면 스칼라로 풀려서 `(함수)[0]`이 \"첫 글자\"가 된다",
+      "situation": "function L($f) { @(Get-Content $f) } 를 만들고 (L 'pw.txt')[0]으로 첫 줄을 읽는다. 여러 줄 파일에서는 맞는데 한 줄짜리 파일에서만 값이 한 글자로 잘린다. 고치는 방법은?",
+      "options": [
+        "Get-Content에 -Raw를 붙인다",
+        "반환형을 [string[]]로 고정하거나 호출부에서 @(L $f)로 감싼다",
+        "함수 안의 @()를 한 번 더 감싼다",
+        "[0] 대신 .Substring(0)을 쓴다"
+      ],
+      "answer": 1,
+      "explain": "파이프라인 출력은 항상 열거되므로 함수 안 @()는 호출 결과를 보호하지 못한다. 한 줄짜리 입력을 일부러 테스트 데이터에 넣어야 잡힌다(실측: 비밀번호 3개가 한 글자로 저장됨)."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "함정 3 — `\"…$변수한글…\"`에서 한글이 변수 이름의 일부가 된다",
+      "situation": "오류 없이 실행되지만 출력에서 숫자가 사라지는 줄을 고르세요.",
+      "code": "$count = $items.Count\n$fail = 0\nWrite-Host \"총 ${count}건 확인\"\nWrite-Host \"$count개 생성 완료\"\nWrite-Host \"실패: ${fail}건\"",
+      "answer_lines": [
+        4
+      ],
+      "explain": "PowerShell은 한글도 식별자 문자로 봐서 $count가 아니라 없는 변수 $count개를 읽고 빈 문자열이 된다. 한글 조사·단위가 붙는 보간은 전부 ${count}로 쓰고, \\$[A-Za-z_][A-Za-z0-9_]*[가-힣] 패턴으로 점검한다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "함정 4 — `@( … )`는 splat이 아니다",
+      "situation": "$line = 'git status -s'를 나눠 명령으로 실행하려 한다. 인자가 제대로 나뉘어 전달되는 것은?",
+      "options": [
+        "& git @($line -split ' ')",
+        "$parts = $line -split ' '; & $parts[0] @($parts)",
+        "$parts = @($line -split ' ' | Select-Object -Skip 1); & git @parts",
+        "& git \"$($line -split ' ')\""
+      ],
+      "answer": 2,
+      "explain": "@( … ) 식은 배열 하나를 인자 하나로 넘긴다. splat(@이름)은 변수에만 쓴다. 문자열 변수를 splat하면 글자 단위로 풀리므로, 단일 요소여도 @()로 감싼 배열 변수여야 한다."
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "section": "함정 10 — `git commit -F -`에 here-string을 파이프하면 메시지가 \"파일 경로\"로 읽힌다 (RVS_App 2026-11-16)",
+      "situation": "PowerShell 5.1에서 여러 줄 커밋 메시지를 안전하게 남기는 방법은?",
+      "options": [
+        "@'…'@ | git commit -F -",
+        "git commit -q -F - @'…'@",
+        "메시지를 BOM 없는 UTF-8 파일로 쓰고 git commit -F 파일, 직후 git log --oneline -1과 git status --short로 확인",
+        "메시지를 Set-Content 기본 인코딩으로 파일에 쓰고 -F로 넘긴다"
+      ],
+      "answer": 2,
+      "explain": "here-string을 stdin이 아니라 인자로 넘겨 pathspec 오류가 나고, 커밋은 안 된 채 스테이징만 남아 다음 커밋에 섞일 수 있다. Set-Content 기본값은 시스템 코드페이지라 한글이 깨진다."
+    },
+    {
+      "id": "q5",
+      "type": "scenario",
+      "section": "작성 직후 습관 (스크립트 하나 만들 때마다)",
+      "situation": "새 PowerShell 5.1 스크립트를 방금 만들었다. 실행하기 전과 처음 실행할 때 할 일을 쓰세요.",
+      "rubric": [
+        "UTF-8 BOM으로 저장됐는지 확인한다고 썼다",
+        "Parser.ParseFile로 정적 구문 검사를 먼저 돌린다고 썼다",
+        "한 줄짜리·빈 파일·요소 1개 배열 같은 경계 입력으로 한 번 돌려 본다고 썼다",
+        "가짜 데이터·임시 폴더에서 실행하고, 비밀 값 대신 길이·일치 여부만 출력한다고 썼다"
+      ],
+      "explain": "이 함정들은 에러 없이 틀린 결과를 내므로, 작성 직후 습관으로 미리 걸러야 한다."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "rule_id": "git_이력재작성_filter_branch_작업트리_파일삭제_함정",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "함정",
+      "situation": "첫 푸시 전 git filter-branch --index-filter 'git rm -r --cached --ignore-unmatch -- 설계도'로 이력에서 폴더를 뺐다. --cached라 로컬 파일은 안전한가?",
+      "options": [
+        "안전하다 — --cached는 인덱스만 건드린다",
+        "안전하지 않다 — 재작성 뒤 새 HEAD를 체크아웃하며, 옛 HEAD에서 추적되던 파일이 새 HEAD에 없으니 작업 트리에서 삭제한다",
+        "filter-repo를 쓰면 안전하다",
+        "미추적 파일까지 전부 삭제된다"
+      ],
+      "answer": 1,
+      "explain": "filter-repo도 같다. 미추적 파일은 안 건드려 '일부만 남은' 폴더가 되어 더 늦게 눈치챈다."
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "section": "원칙 — 백업 → 재작성 → 즉시 복원 → 대조 → ignore",
+      "situation": "재작성 직후 사라진 폴더를 refs/original에서 되살리려 한다. 다시 인덱스에 올라가지 않게 작업 트리에만 푸는 방법은?",
+      "options": [
+        "git checkout refs/original/refs/heads/main -- 설계도",
+        "git archive refs/original/refs/heads/main -- 설계도 | tar -x",
+        "git reset --hard refs/original/refs/heads/main",
+        "git stash pop"
+      ],
+      "answer": 1,
+      "explain": "checkout으로 꺼내면 인덱스에 다시 올라간다. 복원 뒤 git show 옛ref:경로와 대조하되, autocrlf면 줄바꿈만 다른 것은 정상이다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "원칙 — 백업 → 재작성 → 즉시 복원 → 대조 → ignore",
+      "situation": "재작성과 복원·ignore 커밋을 마쳤다. 푸시할 때 맞는 것은?",
+      "options": [
+        "git push --all",
+        "git push --mirror",
+        "git push origin main — main만 올린다",
+        "git push --force --all"
+      ],
+      "answer": 2,
+      "explain": "--all이나 --mirror면 refs/original의 옛 이력이 같이 올라가 재작성한 의미가 사라진다. 올리기 전 git log main --name-only로 그 폴더가 0건인지 확인한다."
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "section": "이미 푸시한 뒤라면",
+      "situation": "API 키가 든 파일을 이미 원격에 푸시했다. 가장 먼저 할 일은?",
+      "options": [
+        "filter-branch로 이력을 재작성하고 force-push한다",
+        "키를 폐기하고 재발급한다",
+        "저장소를 비공개로 바꾼다",
+        "파일을 지우는 새 커밋을 올린다"
+      ],
+      "answer": 1,
+      "explain": "재작성과 force-push를 해도 협업자 사본·포크·캐시에 옛 이력이 남는다. 이 함정에서 깔끔하게 정리할 수 있는 시점은 첫 푸시 전뿐이다."
+    },
+    {
+      "id": "q5",
+      "type": "scenario",
+      "section": "같은 함정 — 추적 해제(git rm --cached) 뒤 브랜치 이동·병합 (JudgeCal, 2026-10-12)",
+      "situation": "작업 브랜치에서 추적 중이던 data/app.db를 git rm --cached + .gitignore로 뺐다. 이 커밋을 main에 합치려 한다. 로컬 DB를 지키는 순서를 쓰세요.",
+      "rubric": [
+        "합치기 전에 DB 파일을 저장소 밖으로 복사 백업한다고 썼다",
+        "main으로 checkout할 때 무시된 로컬 파일이 커밋본으로 조용히 덮이고, 병합이 파일을 지울 수 있다고 짚었다",
+        "합친 직후 파일이 있는지 확인하고, 백업을 원래 자리에 되돌려 대조한다고 썼다"
+      ],
+      "explain": "무시된 파일은 덮어쓰기 대상이라 경고가 나오지 않는다. 사용자가 로컬에서 고친 사본이 있었다면 그 변경이 사라진다."
+    }
+  ]
+}

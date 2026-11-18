@@ -1,9 +1,12 @@
 [
+  "AllAd_Launcher",
+  "FileLens_App",
   "Hub_App",
   "JudgeCal_Athe",
   "Lazzy_App_OS_Monorepo",
   "Market_Agent_App",
   "RVS_App",
   "SSOT_Explorer",
-  "poker_app"
+  "poker_app",
+  "터미널_단축키_모음집"
 ]

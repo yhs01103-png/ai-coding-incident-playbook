@@ -32,8 +32,12 @@ def approve_ids(doc_ids, status, approvals_file=APPROVALS_FILE, snap_dir=SNAP_DI
         if not s or s["status"] not in ("pending", "stale"):
             continue
         approvals[doc_id] = {"hash": s["hash"], "approved_at": today, "kind": "doc"}
-        src = Path(s["path"]) if s.get("path") else source_dir / f"{doc_id}.md"
-        snapshot_path(doc_id, snap_dir).write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+        # 스냅샷은 승인한 내용 그대로(규칙은 md + 짧은 제목 줄). text가 없으면 파일에서 읽는다.
+        text = s.get("text")
+        if text is None:
+            src = Path(s["path"]) if s.get("path") else source_dir / f"{doc_id}.md"
+            text = src.read_text(encoding="utf-8")
+        snapshot_path(doc_id, snap_dir).write_text(text, encoding="utf-8")
         done.append(doc_id)
     approvals_file.write_text(json.dumps(approvals, ensure_ascii=False, indent=2), encoding="utf-8")
     return done
@@ -48,7 +52,7 @@ def main() -> int:
         print(f"\n[{n}] {doc_id} ({'바뀜' if s['status'] == 'stale' else '새 문서'})  {s['path']}")
         snap = snapshot_path(doc_id)
         if s["status"] == "stale" and snap.exists():
-            diff = changed_lines(snap.read_text(encoding="utf-8"), Path(s["path"]).read_text(encoding="utf-8"))
+            diff = changed_lines(snap.read_text(encoding="utf-8"), s["text"])
             print("\n".join("    " + d for d in diff[:30]) + ("\n    …" if len(diff) > 30 else ""))
 
     if "--list" in sys.argv or not todo:

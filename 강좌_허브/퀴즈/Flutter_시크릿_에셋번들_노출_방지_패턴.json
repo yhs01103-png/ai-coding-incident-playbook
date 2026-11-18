@@ -1,0 +1,57 @@
+{
+  "rule_id": "Flutter_시크릿_에셋번들_노출_방지_패턴",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "핵심 문제",
+      "situation": "팀원이 '.env는 .gitignore에 넣었으니 API 키는 안전하다'고 한다. pubspec.yaml의 assets에 .env가 들어 있고 flutter_dotenv로 로드한다. 맞는 판단은?",
+      "options": [
+        "안전하다 — 저장소에 없으면 노출될 곳이 없다",
+        "위험하다 — assets에 나열된 파일은 빌드 산출물(APK·exe)에 평문 그대로 들어가 누구나 꺼낼 수 있다",
+        "안전하다 — 빌드 때 .env가 컴파일되어 사라진다",
+        "위험하다 — 하지만 릴리스 빌드에서는 자동으로 빠진다"
+      ],
+      "answer": 1,
+      "explain": ".gitignore는 저장소 노출만 막고, 빌드 산출물 노출과는 완전히 다른 경로다. APK는 zip이라 압축만 풀면 .env 원본이 나온다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "해법 패턴 — dart-define 전환",
+      "situation": "dart-define으로 전환한 환경값 클래스다. 이 전환의 의도를 깨는 줄을 고르세요.",
+      "code": "class AppEnv {\n  static const String baseUrl = String.fromEnvironment(\n    'BASE_URL',\n    defaultValue: 'http://localhost:8000',\n  );\n  static const String geminiApiKey = String.fromEnvironment(\n    'GEMINI_API_KEY',\n    defaultValue: 'AIzaSy-실제-키-값',\n  );\n}",
+      "answer_lines": [
+        8
+      ],
+      "explain": "기본값에 실제 키를 적으면 소스와 바이너리 모두에 키가 박힌다. 실제 값은 .gitignore된 dart_defines.json에서 --dart-define-from-file로 주입하고, 저장소에는 예시 파일만 둔다. 서버 주소 기본값(localhost)은 비밀이 아니라 괜찮다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "실측 3 — 여러 파일에 흩어진 소비처는 수정 중 하나를 놓치기 쉽다",
+      "situation": "baseUrl getter가 서비스 파일 5개에 각자 중복 구현돼 있어 순서대로 dotenv를 걷어 냈다. 다 고쳤는지 확인하는 가장 확실한 마지막 단계는?",
+      "options": [
+        "파일 5개를 눈으로 한 번 더 훑는다",
+        "flutter analyze 같은 정적분석을 돌려 남은 참조를 잡는다",
+        "앱을 한 번 실행해 첫 화면이 뜨는지 본다",
+        "커밋 메시지에 5개 파일 이름을 적는다"
+      ],
+      "answer": 1,
+      "explain": "실측에서도 한 곳(chat_classifier_service.dart)을 빠뜨렸고 flutter analyze가 Undefined name 'dotenv'로 즉시 잡았다. 첫 화면만 보면 그 서비스를 안 거치는 한 드러나지 않는다."
+    },
+    {
+      "id": "q4",
+      "type": "scenario",
+      "section": "핵심 교훈 — 한 프로젝트에서 고친 보안수정은 형제 프로젝트로 자동 전파되지 않는다",
+      "situation": "같은 스택의 Flutter 앱 4개를 운영한다. 그중 하나에서 방금 .env 에셋 노출을 고쳤다. 다음에 무엇을 해야 하는지와 그 이유를 쓰세요.",
+      "rubric": [
+        "같은 개발자가 만든 형제 프로젝트도 같은 패턴을 독립적으로 쓰고 있을 수 있다고 짚었다",
+        "수정 직후 형제 프로젝트 전체에 같은 감사(grep 등)를 돌린다고 썼다",
+        "'한 번 고쳤으니 안전하다'는 착각이 위험한 이유(코드는 프로젝트 경계를 넘어 전파되지 않음)를 썼다",
+        "이미 배포된 빌드에 키가 들어갔다면 키 재발급이 필요하다고 썼다"
+      ],
+      "explain": "실제로 같은 취약점이 형제 프로젝트 3곳에서 독립적으로 세 번 발견됐다. 보안 수정은 '지금 보고 있는 프로젝트'에만 적용된다는 사실을 의식해야 한다."
+    }
+  ]
+}

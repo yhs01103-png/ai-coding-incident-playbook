@@ -1,0 +1,58 @@
+{
+  "rule_id": "Flutter웹_첫화면멈춤_dartio_조건부import_가벼운웹분리_판단",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "spot",
+      "section": "문제",
+      "situation": "Android용 앱에 웹 플랫폼을 추가했다. 빌드는 성공했지만 브라우저에서 하얀 화면만 나오고 콘솔에도 눈에 띄는 오류가 없다. 원인이 되는 줄을 고르세요.",
+      "code": "Future<void> main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final baseUrl = Platform.environment['API_BASE'] ?? 'http://localhost:8000';\n  runApp(App(baseUrl: baseUrl));\n}",
+      "answer_lines": [
+        3
+      ],
+      "explain": "dart:io의 Platform은 웹에 없다. 환경 읽기는 조건부 export(웹은 빈 표·값은 --dart-define, 앱은 Platform.environment)로 나누고, 시작 경로에서 dart:io를 건드리지 않는다."
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "section": "고치는 법(앱 구조를 지키면서)",
+      "situation": "웹용 localStorage 구현에 package:web을 쓰려 한다. VM 테스트가 계속 돌게 하려면?",
+      "options": [
+        "package:web을 그냥 import한다",
+        "if (dart.library.js_interop) 조건부 import 뒤에만 둔다",
+        "테스트에서 웹 저장소 파일을 제외 목록에 넣는다",
+        "kIsWeb으로 분기하면 import 문제가 없다"
+      ],
+      "answer": 1,
+      "explain": "package:web은 VM에서 컴파일되지 않는다. kIsWeb 분기는 실행 경로만 나눌 뿐 컴파일되는 import는 막지 못한다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "확인할 때의 함정",
+      "situation": "헤드리스 Chrome --screenshot으로 Flutter 웹 첫 화면을 확인했더니 빈 화면이 찍혔다. 맞는 판단은?",
+      "options": [
+        "앱이 여전히 하얀 화면이다",
+        "CanvasKit이 그리기 전에 캡처가 끝났을 수 있다 — --remote-debugging-port로 띄워 CDP로 기다렸다 찍는다",
+        "--dump-dom으로 글자를 찾아보면 확실하다",
+        "document.querySelector로 버튼 글자를 찾는다"
+      ],
+      "answer": 1,
+      "explain": "그림이 그림자 DOM 안의 캔버스라 DOM 검색으로 글자를 찾을 수 없고, 헤드리스 스크린샷·dump-dom은 그리기 전에 끝난다. CDP는 클릭·입력까지 된다."
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "section": "\"웹은 Flutter 그대로 vs 가볍게 따로\" 판단",
+      "situation": "링크로 유입돼 가입 없이 바로 하는 게임형 웹을 만든다. 실측 첫 로딩이 약 20MB(한글 글꼴 14.7MB)였다. 맞는 판단은?",
+      "options": [
+        "Flutter 웹 그대로 — 한 벌로 끝난다",
+        "웹만 가벼운 새 프로젝트로 만들고, 규칙은 서버에 두어 화면만 두 벌로 한다",
+        "글꼴만 빼면 Flutter 웹이 수십 KB가 된다",
+        "웹은 포기한다"
+      ],
+      "answer": 1,
+      "explain": "링크 유입 웹에서는 첫 로딩이 결정적이다. 규칙을 서버 한 곳에 두면 화면이 두 벌이어도 판정이 갈라지지 않는다. Flutter 웹 대응은 앱을 데스크톱 브라우저로 시험할 때 쓰므로 남겨 둔다."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "autoDispose",
+  "term": "autoDispose",
+  "category": "언어·프레임워크",
+  "short": "아무도 구독하지 않으면 바로 상태를 버리는 provider 옵션",
+  "explain": "화면을 떠나면 메모리를 비워 준다. 그러나 initState에서 ref.read(...).load()처럼 구독 없이 읽고 채우면, 채우자마자 구독자가 없어 상태가 버려진다.",
+  "aliases": [],
+  "rules": [
+    "Riverpod_autoDispose_initState_read_로드_즉시폐기_함정"
+  ]
+}

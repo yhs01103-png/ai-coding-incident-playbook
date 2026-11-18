@@ -1,0 +1,44 @@
+{
+  "rule_id": "공유계약_오케스트레이션_경유_접근_패턴",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "문제",
+      "situation": "정책·폴백 설정 같은 공유 계약을 아무 모듈에서나 직접 import하게 두었다. 시간이 지나면 생기는 문제는?",
+      "options": [
+        "import 순환으로 앱이 시작되지 않는다",
+        "계약을 바꿀 때 어디서 쓰는지 전체를 grep해 찾아야 하고, 빠뜨리면 조용히 어긋난다",
+        "계약 값이 메모리에 여러 번 로드된다",
+        "타입체커가 경고를 낸다"
+      ],
+      "answer": 1,
+      "explain": "사용처가 흩어질수록 영향 범위 파악 비용이 커진다. 문법적으로는 아무 문제가 없어 도구가 알려 주지 않는다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "해법 — 공유 계약은 오케스트레이션 레이어만 직접 참조하고, 나머지는",
+      "situation": "계약(정책)은 오케스트레이션만 직접 import하고, 로직에는 조립 시 전달하기로 정했다. 로직 모듈 파일이다. 이 규칙을 어기는 줄을 고르세요.",
+      "code": "from pipeline.steps import normalize\nfrom contracts.policy import FALLBACK_POLICY\n\ndef run(items, policy):\n    return [normalize(i, policy) for i in items]",
+      "answer_lines": [
+        2
+      ],
+      "explain": "로직이 계약을 직접 import하면 계약 사용처가 다시 흩어진다. 로직은 run(items, policy)처럼 오케스트레이션이 넘겨준 값만 쓴다. 그래야 계약을 바꿀 때 오케스트레이션 파일 하나만 보면 된다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "부가 패턴 — 데이터플로우 로그를 에러 로그와 별도로 남긴다",
+      "situation": "에러는 없는데 '로직이 계약을 우회해 직접 접근하는 것 같다'는 의심이 든다. 가장 먼저 열어 볼 자료는?",
+      "options": [
+        "런타임 에러 로그",
+        "요청이 어느 레이어를 거쳐 갔는지만 기록한 데이터플로우 로그",
+        "오류 지점 등록 목록",
+        "git blame"
+      ],
+      "answer": 1,
+      "explain": "에러 로그는 실패만 남긴다. '설계한 경로대로 흘렀는가'는 에러와 별개인 세 번째 로그로만 사후 진단할 수 있다."
+    }
+  ]
+}

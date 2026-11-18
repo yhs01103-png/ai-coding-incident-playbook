@@ -5,23 +5,33 @@ CODE_FILES = [
     "build.py", "approve.py", "hub_gui.pyw", "test_approve.py",
     "빌드.bat", "승인.bat", "허브.bat",
     "logic/__init__.py", "logic/parse_md.py", "logic/classify.py", "logic/validate.py",
-    "logic/publish_check.py", "logic/render_html.py", "logic/package_plan.py",
+    "logic/publish_check.py", "logic/render_html.py", "logic/package_plan.py", "logic/export.py", "logic/test_export.py",
     "logic/test_logic.py", "logic/test_validate_quiz.py", "logic/test_publish_check.py",
-    "logic/test_render_html.py", "logic/test_package_plan.py", "logic/test_projects.py",
+    "logic/test_render_html.py", "logic/test_package_plan.py", "logic/test_projects.py", "logic/test_terms.py",
     "템플릿/강좌_템플릿.html",
 ]
 PROJECT_KEY = "project:"
+TERM_KEY = "term:"
+
+
+def public_short_titles(short: dict, approved: set[str]) -> dict:
+    """공개본 짧은제목.json도 승인된 규칙 것만(없는 규칙이 있으면 공개본 빌드가 실패한다)."""
+    return {k: v for k, v in short.items() if k in approved}
 
 
 def plan(status: dict, quiz_status: dict) -> list[tuple[str, tuple[str, str]]]:
     """(저장소 안 경로, (출처 종류, 출처 상대경로)). 출처 종류: source=공용 md, hub=허브 파일."""
     approved = [k for k, s in sorted(status.items()) if s["status"] == "approved"]
-    out = [(f"공용/{k}.md", ("source", f"{k}.md")) for k in approved if not k.startswith(PROJECT_KEY)]
+    out = [(f"공용/{k}.md", ("source", f"{k}.md")) for k in approved if ":" not in k]
     for k in approved:
         if k.startswith(PROJECT_KEY):
             pid = k[len(PROJECT_KEY):]
             name = f"{pid}.md" if pid == "_기록방식" else f"{pid}.json"
             out.append((f"강좌_허브/프로젝트/{name}", ("hub", f"프로젝트/{name}")))
+        elif k.startswith(TERM_KEY):
+            name = f"{k[len(TERM_KEY):]}.json"
+            out.append((f"강좌_허브/용어/{name}", ("hub", f"용어/{name}")))
+    # 퀴즈(quiz:<id>)는 아래에서 quiz_status(자기 승인 + 규칙 승인)로 고른다.
     out += [(f"강좌_허브/퀴즈/{qid}.json", ("hub", f"퀴즈/{qid}.json"))
             for qid, s in sorted(quiz_status.items()) if s["status"] == "approved"]
     out += [(f"강좌_허브/{c}", ("hub", c)) for c in CODE_FILES]

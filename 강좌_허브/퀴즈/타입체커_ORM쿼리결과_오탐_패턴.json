@@ -1,0 +1,56 @@
+{
+  "rule_id": "타입체커_ORM쿼리결과_오탐_패턴",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "패턴 1 — 같은 이름의 루프 변수를 한 함수 안에서 재사용",
+      "situation": "mypy가 두 번째 루프 줄에서 'ModelA has no attribute field_only_on_b'를 낸다. 그 줄은 query_b_rows를 순회한다. 맞는 판단과 수정은?",
+      "options": [
+        "ModelA에 field_only_on_b를 추가한다",
+        "두 루프가 같은 변수 r을 써서 타입체커가 첫 루프의 ModelA를 들고 간 오탐일 수 있다 — 실제 순회 모델에 속성이 있으면 루프 변수 이름을 다르게 짓는다",
+        "그 줄에 # type: ignore를 단다",
+        "두 번째 루프를 별도 함수로 옮기고 Any로 선언한다"
+      ],
+      "answer": 1,
+      "explain": "오류 메시지의 모델 이름이 아니라 그 줄이 실제로 도는 이터러블을 본다. 억제 주석은 나중에 그 자리에 진짜 버그가 생겨도 묻어 버리므로 이름 분리가 가장 싸고 확실하다."
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "section": "좁게(또는 대충) 선언해뒀다",
+      "situation": "yield를 쓰면서 마지막에 return (count, errors)로 결과를 실어 보내는 함수를 Iterator[Row]로 선언했다. 그 함수 안 여러 줄에서 '타입을 정할 수 없다'류 오류가 한꺼번에 난다. 맞는 수정은?",
+      "options": [
+        "오류가 난 줄마다 억제 주석을 단다",
+        "시그니처를 Generator[Row, None, tuple[int, list[str]]]처럼 세 타입 인자 모두 정확히 선언한다",
+        "return 값을 없애고 전역 변수로 넘긴다",
+        "Iterator[Any]로 바꾼다"
+      ],
+      "answer": 1,
+      "explain": "Iterator나 Generator[T, None, None]은 '반환값 없음'이라 반환값을 만드는 지역변수 추론이 줄줄이 깨진다. 로직은 그대로 두고 타입 힌트만 정확히 하면 한 번에 해소된다."
+    },
+    {
+      "id": "q3",
+      "type": "spot",
+      "section": "변수가 딕셔너리 리터럴 안에서 다른 값의 타입으로 잘못 통합 추론된다",
+      "situation": "mypy가 5번 줄에서 \"Generator has incompatible item type 'object'; expected 'bool'\"을 낸다. 근본 원인을 고칠 줄을 고르세요.",
+      "code": "def summarize(rows):\n    steps = []\n    for r in rows:\n        steps.append({\"stage\": r.stage, \"ms\": r.ms})\n    return {\"ok\": True, \"totalMs\": round(sum(s.get(\"ms\", 0) for s in steps), 2)}",
+      "answer_lines": [
+        2
+      ],
+      "explain": "타입 힌트 없는 빈 리스트로 시작한 변수가 같은 딕셔너리 리터럴 안의 bool과 잘못 통합됐다. 선언부를 steps: list[dict] = []로 정확히 하면 이 변수를 참조하는 모든 지점의 오류가 사라진다. 오류가 난 줄에 억제 주석을 달지 않는다."
+    },
+    {
+      "id": "q4",
+      "type": "scenario",
+      "section": "CI 게이트 도입 초기에 특히 조심할 것",
+      "situation": "타입체커를 advisory로 처음 켰더니 미해결 오류 120개가 나왔다. 이 목록을 어떻게 다룰지 쓰세요.",
+      "rubric": [
+        "'미해결 오류 = 잠재 버그 목록'으로 그대로 믿지 않는다고 썼다",
+        "오류가 ORM 루프 근처·제너레이터 함수 하나·무관한 예상 타입 같은 오탐 신호에 해당하는지 먼저 본다고 썼다",
+        "미루더라도 한 번은 확인 순서를 거쳐 '진짜 버그 후보'와 '오탐'을 나눠 기록한다고 썼다"
+      ],
+      "explain": "나눠 둔 기록이 있어야 나중에 목록을 다시 볼 사람이나 세션이 처음부터 다시 조사하지 않는다."
+    }
+  ]
+}

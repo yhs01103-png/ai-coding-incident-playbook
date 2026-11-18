@@ -1,0 +1,44 @@
+{
+  "rule_id": "Dart_이름있는매개변수_후행쉼표_위치_함정",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "함정",
+      "situation": "다음 Dart 시그니처 중 컴파일되는 것은? (줄바꿈은 결과에 영향이 없어 한 줄로 적었다)",
+      "options": [
+        "`Future<int> bar(String stat, {bool isDayPass = false}, ) async {}`",
+        "`Future<int> bar(String stat, {bool isDayPass = false,}) async {}`",
+        "`Future<int> bar(String stat, {bool isDayPass = false,},) async {}`",
+        "`Future<int> bar(String stat, [bool isDayPass = false], ) async {}`"
+      ],
+      "answer": 1,
+      "explain": "후행 쉼표는 이름 있는 매개변수 그룹 안쪽(마지막 매개변수 뒤, `}` 앞)에만 허용된다. `}` 뒤의 쉼표는 안쪽에 쉼표가 이미 있어도, 선택적 위치 매개변수 `[...]`여도, 줄바꿈과 무관하게 항상 무효다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "실측 사례 (poker_app, 2026-09-15)",
+      "situation": "정상 동작하던 시그니처를 테스트 페이크 클라이언트로 옮기며 다른 override들과 모양을 맞추려 재포맷했다. 'Expected to find ')''가 나는 줄을 고르세요.",
+      "code": "class _CardClient extends FakeClient {\n  @override\n  Future<PurchaseBuffCardResult> purchaseBuffCard(\n    String stat, int tier, {bool isDayPass = false},\n  ) async {\n    return const PurchaseBuffCardResult.ok();\n  }\n}",
+      "answer_lines": [
+        4
+      ],
+      "explain": "닫는 `}` 바로 뒤의 쉼표가 원인이다. 원본처럼 `{bool isDayPass = false,` 다음 줄에 `}) async {`로 붙여 써야 한다. 이 에러는 원인 줄·칼럼을 정확히 짚어 주는 드문 경우다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "해법",
+      "situation": "이 실수를 다시 하지 않는 가장 확실한 방법은?",
+      "options": [
+        "후행 쉼표를 아예 쓰지 않는다",
+        "dart format(또는 저장 시 포맷)으로 정규 포맷을 맞춘다",
+        "시그니처를 한 줄로만 쓴다",
+        "override 메서드는 손으로 새로 타이핑한다"
+      ],
+      "answer": 1,
+      "explain": "포맷터를 믿을 수 있으면 규칙을 외울 필요가 없어진다. 복사할 때는 개행 위치까지 그대로 옮기고 임의로 '정리'하지 않는 습관도 함께 둔다."
+    }
+  ]
+}

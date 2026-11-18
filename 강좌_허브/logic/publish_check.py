@@ -36,6 +36,16 @@ def decide(kind: str, hits: list, approval: dict | None, current_hash: str) -> s
     return "approved" if approval.get("hash") == current_hash else "stale"
 
 
+def rule_approval_text(md_text: str, short: str) -> str:
+    """규칙 승인 대상 = 원본 md + 짧은 제목 한 줄. 짧은 제목만 바뀌어도 재승인(바뀐 줄은 이 한 줄)."""
+    return md_text.rstrip("\n") + f"\n\n짧은 제목: {short}"
+
+
+def quiz_public(own: str, rule: str) -> str:
+    """퀴즈는 자기 승인과 규칙 승인이 둘 다 있어야 공개."""
+    return "waiting_rule" if own == "approved" and rule != "approved" else own
+
+
 def changed_lines(old: str, new: str) -> list[str]:
     diff = difflib.unified_diff(old.splitlines(), new.splitlines(), lineterm="", n=0)
     return [d for d in diff if d[:1] in "+-" and not d.startswith(("+++", "---"))]

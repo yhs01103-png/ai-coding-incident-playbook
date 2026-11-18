@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI 코딩 사고 플레이북</title>
-<link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* 기초 강좌(강좌_v2.html)·3월 교재와 같은 톤: 어두운 배경 + 보라/분홍/민트/주황 */
 :root{
@@ -14,7 +14,7 @@
   --problem:#fc6c8f;--problem-soft:rgba(252,108,143,.12);--solution:#6cfcb8;--solution-soft:rgba(108,252,184,.1);
   --case:#a99cff;--case-soft:rgba(124,108,252,.14);--checklist:#fcb86c;--checklist-soft:rgba(252,184,108,.12);
   --muted:#9a9ab8;--muted-soft:#1f1f28;--ok:#6cfcb8;--bad:#fc6c8f;
-  --head:'Gmarket Sans','Noto Sans KR',sans-serif;--mono:'JetBrains Mono',Consolas,monospace;
+  --head:'Noto Sans KR','Malgun Gothic',sans-serif;--mono:'JetBrains Mono',Consolas,monospace;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);
@@ -38,8 +38,9 @@ nav a{padding:7px 14px;border-radius:999px;color:var(--sub);font-weight:500;font
 nav a.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(124,108,252,.35)}
 nav a:hover{text-decoration:none;color:var(--ink)}
 main{max-width:1280px;margin:0 auto;padding:20px}
-.layout{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
-@media (max-width:860px){.layout{grid-template-columns:1fr}}
+/* minmax(0,1fr): 본문의 긴 코드가 칸 폭을 밀어 화면이 옆으로 넘치지 않게 */
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
 .side{position:sticky;top:76px;background:var(--panel);border:1px solid var(--line);border-radius:14px;
   padding:14px;max-height:calc(100vh - 96px);display:flex;flex-direction:column}
 @media (max-width:860px){.side{position:static;max-height:none}}
@@ -147,6 +148,68 @@ section.s.plain{border-left:0;margin-left:0;padding-left:0}
 .rl{margin:6px 0;padding-left:18px}.rl li{margin:6px 0}.rl .tag{margin-left:4px}.rl .fold{display:none}
 .hero{margin-bottom:18px}.hero h2{margin:0;font-size:22px}.hero p{margin:4px 0 0;color:var(--sub)}
 .prog{font-size:12px;color:var(--sub)}
+/* 가독성 2차: 한 줄을 짧게, 줄·문단 간격 넓게, 절 사이 여백 크게 */
+.md{max-width:68ch;line-height:1.9}.intro{max-width:68ch}
+.md p{margin:12px 0}.md li{margin:7px 0}.md ul,.md ol{margin:12px 0}
+section.s{margin-top:30px;padding-top:24px}
+section.s>h2{font-size:20px;margin-bottom:14px}
+h1.t{font-size:27px;margin-bottom:4px}
+.full{color:var(--dim);font-size:14px;line-height:1.6;margin:0 0 14px;max-width:80ch}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+.toc a{font-size:12.5px;padding:4px 10px;border-radius:8px;background:var(--soft);color:var(--sub);border:1px solid var(--line)}
+.toc a:hover{color:var(--ink);border-color:var(--line2);text-decoration:none}
+.toc a i{font-style:normal;display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+/* 목록: 짧은 제목 한 줄 + 회색 메타 한 줄, 항목 사이 구분선 */
+.item{padding:10px 10px;border-bottom:1px solid var(--line);border-radius:0;font-size:14.5px;font-weight:600}
+.item.on{border-radius:10px;border-bottom-color:transparent}
+.item .m{font-weight:500;font-size:11.5px;color:var(--dim);flex-wrap:wrap}
+.item .m span+span::before{content:"·";margin-right:6px;color:var(--line2)}
+a.tag{color:var(--sub)}a.tag:hover{color:var(--ink);text-decoration:none;background:var(--soft2)}
+/* 용어: 본문 첫 등장에 점선 밑줄, 올리면 뜻 */
+.term{color:inherit;border-bottom:1.5px dotted var(--link);position:relative;cursor:help}
+.term:hover{text-decoration:none;color:var(--link)}
+.term:hover::after,.term.tip::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);z-index:9;width:max-content;max-width:320px;
+  background:#22222e;color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.6;
+  font-weight:500;white-space:normal;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.tc h3{margin:0;font-size:18px;font-family:var(--head)}.tc .ts{color:var(--link);font-weight:600;margin:6px 0 8px;font-size:14.5px}
+.tc p{color:var(--body);font-size:14.5px;margin:0 0 10px}.tc .al{font-size:12px;color:var(--dim)}
+.tc.hit{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,108,252,.35)}
+.tc ul{margin:6px 0 0;padding-left:18px;font-size:13.5px}
+/* 1단계 점검: 찾기 패널은 넓은 화면에선 늘 펼침, 좁은 화면에선 접어서 본문이 먼저 보이게 */
+.finder{display:flex;flex-direction:column;min-height:0;flex:1}
+.ftoggle{display:none}
+@media (max-width:860px){
+  .ftoggle{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:none;color:var(--ink);
+    font:inherit;font-weight:700;font-size:15px;padding:2px;cursor:pointer}
+  .ftoggle .fa{font-size:12px;font-weight:600;color:var(--link)}
+  .finder.closed>:not(.ftoggle){display:none}
+  .finder:not(.closed)>.ftoggle{margin-bottom:6px}
+  .side .side-head{display:none}
+  .list{max-height:60vh}
+}
+/* 공백 없는 긴 글자(경로·식별자·URL)가 좁은 화면 밖으로 밀려나지 않게 — 줄 안에 들어갈 수 없을 때만 끊긴다 */
+main{overflow-wrap:anywhere}
+[hidden]{display:none!important}
+/* 2단계: 칩은 버튼(키보드로 고를 수 있게), 포커스 테두리 */
+button.chip{font-family:inherit;line-height:1.6}
+.chip:focus-visible,.ln:focus-visible,.opt:focus-visible,.btn:focus-visible,.ftoggle:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+/* 휴대폰: 용어 뜻은 화면 아래에 고정된 띠로(단어 위치에 따라 화면 밖으로 나가지 않게) */
+@media (hover:none){.term.tip::after{position:fixed;left:16px;right:16px;bottom:16px;top:auto;width:auto;max-width:none}}
+/* 퀴즈 점수 요약·끝 버튼 */
+.qsum{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:13px;color:var(--sub);margin:0 0 6px}
+.qsum .bars{flex:1 0 100%;margin:4px 0 6px}.qsum b{color:var(--ink)}
+.qend{justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+/* 용어 검색·분야 묶음 */
+.tbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 18px}
+.tbar input{flex:1 1 260px;max-width:420px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);font:inherit;font-size:14px}
+.tbar .chips{margin:0}
+.tgroup{margin-bottom:26px}.tgh{font-size:16px;color:var(--sub);margin:0 0 10px;font-weight:700}
+.rhead{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.rhead h1.t{flex:1 1 320px}
+.rhead .btn{flex:none;margin-top:4px}
+.meta.p{margin-bottom:6px}
+.meta .ml{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--dim);margin-right:2px}
 </style>
 </head>
 <body>
@@ -156,6 +219,7 @@ section.s.plain{border-left:0;margin-left:0;padding-left:0}
     <a href="#rules" data-v="rules">규칙</a>
     <a href="#quiz" data-v="quiz">퀴즈</a>
     <a href="#projects" data-v="projects">프로젝트</a>
+    <a href="#terms" data-v="terms">용어</a>
     <a id="course" href="#" target="_blank" rel="noopener" hidden>기초 강좌 ↗</a>
   </nav>
 </div></header>
@@ -167,7 +231,9 @@ const KIND_COLOR = {problem:"var(--problem)",solution:"var(--solution)",case:"va
 const byId = Object.fromEntries(DATA.rules.map(r => [r.id, r]));
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const state = {q:"", kind:"", project:""};
+const state = {q:"", kind:"", project:"", tag:"", qf:""};
+const short = r => r.short || r.title;
+const enc = encodeURIComponent;
 
 // ---------- 진도 저장 (브라우저에만, 실패해도 화면은 동작) ----------
 function loadProg(){ try { return JSON.parse(localStorage.getItem("playbook-progress") || "{}"); } catch { return {}; } }
@@ -214,41 +280,147 @@ function md(src){
 
 // ---------- 화면 ----------
 function nav(v){ document.querySelectorAll("#nav a[data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v)); }
-function quizDone(id){ const qs = (DATA.quizzes[id] || {}).questions || []; const p = PROG[id] || {};
-  return [qs.filter(q => p[q.id] === "ok").length, qs.length]; }
-function filtered(){
+function quizState(id){ const qs = (DATA.quizzes[id] || {}).questions || []; const p = PROG[id] || {};
+  const ok = qs.filter(q => p[q.id] === "ok").length, no = qs.filter(q => p[q.id] === "no").length;
+  return {ok, no, n: qs.length, left: qs.length - ok - no}; }
+function quizDone(id){ const s = quizState(id); return [s.ok, s.n]; }
+// 퀴즈 화면 필터: 안 푼 문제가 있음 / 틀린 문제가 있음 / 다 맞힘
+const QF = {"": "전체", todo: "안 푼 문제", wrong: "틀린 문제", done: "다 맞힘"};
+const qfPass = id => { const s = quizState(id);
+  return !state.qf || (state.qf === "todo" ? s.left > 0 : state.qf === "wrong" ? s.no > 0 : s.ok === s.n); };
+function filtered(mode){
   const q = state.q.trim().toLowerCase();
-  return DATA.rules.filter(r => (!q || (r.title + " " + r.id + " " + r.intro).toLowerCase().includes(q))
-    && (!state.kind || r.sections.some(s => s.kind === state.kind))
-    && (!state.project || r.projects.includes(state.project)));
+  return DATA.rules.filter(r => (!q || (short(r) + " " + r.title + " " + r.id + " " + r.intro).toLowerCase().includes(q))
+    && (mode === "quiz" ? DATA.quizzes[r.id] && qfPass(r.id) : !state.kind || r.sections.some(s => s.kind === state.kind))
+    && (!state.project || r.projects.includes(state.project))
+    && (!state.tag || (r.tags || []).includes(state.tag)))
+    .sort((a, b) => short(a).localeCompare(short(b), "ko"));
+}
+// 좁은 화면에서 찾기 패널을 사용자가 직접 펼치거나 접었으면 그 상태를 화면을 옮겨도 유지한다(null = 아직 안 건드림).
+let finderOpen = null, sideCtx = {cur: "", mode: "rules"};
+const filtering = () => !!(state.q || state.kind || state.project || state.tag || state.qf);
+function listItems(cur, mode){
+  const rows = filtered(mode);
+  return [rows.length, rows.map(r => { const [d, n] = quizDone(r.id); return `<a class="item ${r.id === cur ? "on" : ""}"
+      href="#${mode === "quiz" ? "quiz" : "rule"}/${enc(r.id)}" title="${esc(r.title)}">${esc(short(r))}
+      <div class="m">${(r.tags || []).slice(0, 2).map(t => `<span>${esc(t)}</span>`).join("")}${n ? `<span>퀴즈 ${d}/${n}</span>` : ""}${r.public ? "" : "<span>비공개</span>"}</div></a>`; }).join("")];
 }
 function sidebar(cur, mode){
+  sideCtx = {cur, mode};
   const projects = [...new Set(DATA.rules.flatMap(r => r.projects))].sort();
-  const rows = filtered().filter(r => mode !== "quiz" || DATA.quizzes[r.id]);
+  const tags = [...new Set(DATA.rules.flatMap(r => r.tags || []))].sort((a, b) => a.localeCompare(b, "ko"));
+  const [count, items] = listItems(cur, mode);
+  const open = finderOpen ?? filtering();
+  const allQ = DATA.rules.filter(r => DATA.quizzes[r.id]), mastered = allQ.filter(r => { const s = quizState(r.id); return s.ok === s.n; }).length;
   const head = mode === "quiz"
-    ? ["QUIZ · 문제 풀기", "규칙별 퀴즈", "퀴즈가 있는 규칙만 보여요. 고르면 오른쪽에서 바로 풀어요."]
-    : ["RULES · 규칙 찾기", "범용 규칙 목록", "제목·내용으로 검색하고, 절 종류나 프로젝트로 좁혀요."];
+    ? ["QUIZ · 문제 풀기", "규칙별 퀴즈", `다 맞힌 규칙 <b>${mastered}</b> / ${allQ.length}개 · 기록은 이 브라우저에만 저장돼요.`]
+    : ["RULES · 규칙 찾기", "범용 규칙 목록", "검색하거나 기술 태그·절 종류·프로젝트로 좁혀요."];
   return `<aside class="side">
     <div class="side-head"><div class="eyebrow">${head[0]}</div><div class="side-title">${head[1]}</div>
       <div class="side-desc">${head[2]}</div></div>
+    <div class="finder ${open ? "" : "closed"}">
+    <button class="ftoggle" type="button" aria-expanded="${open}"><span>${mode === "quiz" ? "퀴즈 고르기" : "규칙 찾기"} · <b class="fcount">${count}</b>개</span><span class="fa">${open ? "접기 ▴" : "펼치기 ▾"}</span></button>
     <label class="flabel" for="q">검색</label>
     <input id="q" placeholder="예: 게이트, Hive, 동시 요청" value="${esc(state.q)}">
-    <div class="flabel">절 종류</div>
+    <label class="flabel" for="tagsel">기술 태그</label>
+    <select id="tagsel"><option value="">모든 태그</option>${tags.map(t =>
+      `<option ${state.tag === t ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>
+    ${mode === "quiz" ? `<div class="flabel">푼 상태</div>
+    <div class="chips">${Object.entries(QF).map(([k, v]) =>
+      `<button type="button" class="chip ${(state.qf || "") === k ? "on" : ""}" data-qf="${k}" aria-pressed="${(state.qf || "") === k}">${v}</button>`).join("")}</div>`
+    : `<div class="flabel">절 종류</div>
     <div class="chips">${["", "problem", "solution", "case", "checklist"].map(k =>
-      `<span class="chip ${state.kind === k ? "on" : ""}" data-k="${k}">${k ? KIND[k] + " 있음" : "전체"}</span>`).join("")}</div>
+      `<button type="button" class="chip ${state.kind === k ? "on" : ""}" data-k="${k}" aria-pressed="${state.kind === k}">${k ? KIND[k] + " 있음" : "전체"}</button>`).join("")}</div>`}
     <label class="flabel" for="proj">프로젝트</label>
     <select id="proj"><option value="">모든 프로젝트</option>${projects.map(p =>
       `<option ${state.project === p ? "selected" : ""}>${esc(p)}</option>`).join("")}</select>
-    <div class="count">${rows.length}개</div>
-    <div class="list">${rows.map(r => { const [d, n] = quizDone(r.id); return `<a class="item ${r.id === cur ? "on" : ""}"
-      href="#${mode === "quiz" ? "quiz" : "rule"}/${encodeURIComponent(r.id)}">${esc(r.title)}
-      <div class="m">${n ? `<span>퀴즈 ${d}/${n}</span>` : ""}${r.public ? "" : "<span>비공개</span>"}</div></a>`; }).join("")}</div>
+    <div class="count"><span class="fcount">${count}</span>개</div>
+    <div class="list">${items}</div>
+    </div>
   </aside>`;
 }
 function bindSide(){
-  $("#q").oninput = e => { state.q = e.target.value; route(true); };
-  document.querySelectorAll(".chip").forEach(c => c.onclick = () => { state.kind = c.dataset.k; route(); });
+  // 검색은 글자마다 화면 전체가 아니라 목록만 다시 그린다(본문 변환·용어 표시를 매번 다시 돌리지 않게).
+  $("#q").oninput = e => { state.q = e.target.value;
+    const [count, items] = listItems(sideCtx.cur, sideCtx.mode);
+    $(".list").innerHTML = items; document.querySelectorAll(".fcount").forEach(x => x.textContent = count); };
+  const f = $(".finder"), t = $(".ftoggle");
+  t.onclick = () => { const open = f.classList.toggle("closed") === false; finderOpen = open;
+    t.setAttribute("aria-expanded", open); t.querySelector(".fa").textContent = open ? "접기 ▴" : "펼치기 ▾"; };
+  document.querySelectorAll(".side .chip").forEach(c => c.onclick = () => {
+    if (c.dataset.qf !== undefined) state.qf = c.dataset.qf; else state.kind = c.dataset.k; route(); });
   $("#proj").onchange = e => { state.project = e.target.value; route(); };
+  $("#tagsel").onchange = e => { state.tag = e.target.value; route(); };
+}
+// ---------- 용어: 본문에서 처음 나오는 곳에 점선 밑줄 + 뜻 ----------
+const TERMS = DATA.terms || [];
+const termById = Object.fromEntries(TERMS.map(t => [t.id, t]));
+const TERM_WORDS = TERMS.flatMap(t => [t.term, ...t.aliases].map(w => [w, t])).sort((a, b) => b[0].length - a[0].length);
+function glossify(root){
+  const used = new Set(), skip = "code,pre,a,h1,h2,h3,button,textarea,.term";
+  for (const [word, t] of TERM_WORDS){
+    if (used.has(t.id)) continue;
+    const ascii = /^[\x00-\x7f]+$/.test(word), lw = word.toLowerCase();
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n =>
+      n.parentElement.closest(skip) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT});
+    let node;
+    while ((node = walker.nextNode())){
+      const text = ascii ? node.data.toLowerCase() : node.data;
+      let i = text.indexOf(ascii ? lw : word);
+      // 영문 용어는 단어 경계에서만(BOM이 BOMB 안에서 잡히지 않게)
+      while (i >= 0 && ascii && (/\w/.test(text[i - 1] || "") || /\w/.test(text[i + word.length] || ""))) i = text.indexOf(lw, i + 1);
+      if (i < 0) continue;
+      const mid = node.splitText(i); mid.splitText(word.length);
+      const a = document.createElement("a");
+      a.className = "term"; a.href = "#term/" + enc(t.id); a.dataset.tip = `${t.term} — ${t.short}`;
+      mid.replaceWith(a); a.appendChild(mid); used.add(t.id); break;
+    }
+  }
+}
+// 마우스가 없는 기기: 첫 번째 누름은 뜻만 보여 주고, 같은 단어를 한 번 더 누르면 용어 페이지로 간다.
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("a.term");
+  document.querySelectorAll("a.term.tip").forEach(x => { if (x !== a) x.classList.remove("tip"); });
+  if (!a || !matchMedia("(hover: none)").matches) return;
+  if (!a.classList.contains("tip")){ e.preventDefault(); a.classList.add("tip"); }
+});
+function termsView(id){
+  nav("terms");
+  const sorted = [...TERMS].sort((a, b) => a.term.localeCompare(b.term, "ko"));
+  const cats = [...new Set(sorted.map(t => t.category))].sort((a, b) => a.localeCompare(b, "ko"));
+  const card = t => `<div class="card tc ${t.id === id ? "hit" : ""}" id="t-${esc(t.id)}" data-s="${esc([t.term, ...t.aliases, t.short, t.explain].join(" ").toLowerCase())}">
+      <h3>${esc(t.term)}${t.public === false ? ' <span class="tag warn">비공개</span>' : ""}</h3><div class="ts">${inline(t.short)}</div>
+      <p>${inline(t.explain)}</p>${t.example ? `<p class="hint">예: ${inline(t.example)}</p>` : ""}
+      ${t.aliases.length ? `<div class="al">다른 이름: ${t.aliases.map(esc).join(", ")}</div>` : ""}
+      ${t.rules.length ? `<ul>${t.rules.map(r => `<li>${ruleLink(r)}</li>`).join("")}</ul>` : ""}</div>`;
+  $("#app").innerHTML = `<div class="hero"><div class="eyebrow">GLOSSARY · 단어 뜻</div><h2>용어 모음</h2>
+      <p>규칙 본문에서 점선 밑줄이 그어진 단어예요. 마우스를 올리면(휴대폰은 한 번 누르면) 뜻이 보이고, 한 번 더 누르면 여기로 와요.</p></div>
+    ${TERMS.length ? `<div class="tbar"><input id="tq" placeholder="용어·다른 이름·뜻으로 찾기" aria-label="용어 검색">
+      <div class="chips">${["", ...cats].map(c => `<button type="button" class="chip ${c ? "" : "on"}" data-tc="${esc(c)}" aria-pressed="${!c}">${c ? esc(c) : "전체"}</button>`).join("")}</div>
+      <span class="prog" id="tn"></span></div>` : ""}
+    ${cats.map(c => `<section class="tgroup" data-cat="${esc(c)}"><h2 class="tgh">${esc(c)}</h2><div class="tgrid">${sorted.filter(t => t.category === c).map(card).join("")}</div></section>`).join("")
+      || `<div class="empty">아직 공개된 용어가 없어요.</div>`}
+    <div class="empty" id="tnone" hidden>조건에 맞는 용어가 없어요.</div>`;
+  // 검색·분야 선택은 카드를 숨기고 보이기만 한다(다시 그리지 않음)
+  let cat = "";
+  const apply = () => { const q = ($("#tq").value || "").trim().toLowerCase(); let shown = 0;
+    document.querySelectorAll(".tgroup").forEach(g => { let n = 0;
+      g.querySelectorAll(".tc").forEach(el => { const ok = (!cat || g.dataset.cat === cat) && (!q || el.dataset.s.includes(q));
+        el.hidden = !ok; n += ok; });
+      g.hidden = !n; shown += n; });
+    $("#tn").textContent = `${shown}개`; $("#tnone").hidden = shown > 0; };
+  if ($("#tq")){ $("#tq").oninput = apply;
+    document.querySelectorAll(".tbar .chip").forEach(c => c.onclick = () => { cat = c.dataset.tc;
+      document.querySelectorAll(".tbar .chip").forEach(x => { x.classList.toggle("on", x === c); x.setAttribute("aria-pressed", x === c); }); apply(); });
+    apply(); }
+  const hit = id && document.getElementById("t-" + id);
+  if (hit) hit.scrollIntoView({block: "center"}); else window.scrollTo(0, 0);
+}
+function tocLabel(h, max = 22){
+  const s = h.replace(/\*\*/g, "").replace(/^\d+(-\d+)?\.\s*/, "").split(" — ")[0].trim();
+  if (s.length <= max) return s;
+  const cut = s.lastIndexOf(" ", max);
+  return (cut > max / 2 ? s.slice(0, cut) : s.slice(0, max)).replace(/[\s,·(]+$/, "") + "…";
 }
 function ruleView(id){
   nav("rules");
@@ -256,16 +428,24 @@ function ruleView(id){
   if (!r){ $("#app").innerHTML = `<div class="empty">규칙이 없습니다.</div>`; return; }
   const n = ((DATA.quizzes[r.id] || {}).questions || []).length;
   $("#app").innerHTML = `<div class="layout">${sidebar(r.id, "rules")}<article class="card">
-    <h1 class="t">${esc(r.title)}</h1>
-    <div class="meta">${r.projects.map(p => `<a class="tag" href="${projById[p] ? "#project/" + encodeURIComponent(p) : "#projects"}">${esc(projById[p] ? projById[p].name : p)}</a>`).join("")}
-      ${(r.tags || []).map(t => `<span class="tag ghost">${esc(t)}</span>`).join("")}
-      <span class="tag">갱신 ${esc(r.updated)}</span>${r.public ? "" : `<span class="tag warn">비공개</span>`}
-      ${n ? `<a class="btn" style="margin-left:auto" href="#quiz/${encodeURIComponent(r.id)}">퀴즈 ${n}문제 풀기</a>` : ""}</div>
+    <div class="rhead"><h1 class="t">${esc(short(r))}</h1>
+      ${n ? `<a class="btn" href="#quiz/${enc(r.id)}">퀴즈 ${n}문제 풀기</a>` : ""}</div>
+    ${short(r) !== r.title ? `<p class="full">${inline(r.title)}</p>` : ""}
+    ${r.projects.length ? `<div class="meta p"><span class="ml">실측</span>${r.projects.map(p => `<a class="tag" href="${projById[p] ? "#project/" + enc(p) : "#projects"}">${esc(projById[p] ? projById[p].name : p)}</a>`).join("")}</div>` : ""}
+    <div class="meta">${(r.tags || []).map(t => `<a class="tag ghost" href="#tag/${enc(t)}" title="이 태그의 규칙 모두 보기">${esc(t)}</a>`).join("")}
+      <span class="tag">갱신 ${esc(r.updated)}</span>${r.public ? "" : `<span class="tag warn">비공개</span>`}</div>
+    ${(() => { // 목차: 문제·해법·사례·점검 절만, 최대 8개. 글자는 단어 경계에서 잘라 "…"(전체 제목은 마우스를 올리면)
+      const main = r.sections.map((s, i) => [s, i]).filter(([s]) => KIND_COLOR[s.kind]).slice(0, 8);
+      return main.length > 1 ? `<nav class="toc">${main.map(([s, i]) => `<a href="#s-${i}" data-s="${i}" title="${esc(s.heading)}"><i style="background:${KIND_COLOR[s.kind]}"></i>${esc(tocLabel(s.heading))}</a>`).join("")}</nav>` : "";
+    })()}
     ${r.intro ? `<div class="intro md">${md(r.intro)}</div>` : ""}
-    ${r.sections.map(s => `<section class="s"><h2><span class="k ${s.kind}">${KIND[s.kind]}</span>${inline(s.heading)}</h2>
+    ${r.sections.map((s, i) => `<section class="s" id="s-${i}"><h2><span class="k ${s.kind}">${KIND[s.kind]}</span>${inline(s.heading)}</h2>
       <div class="md">${md(s.body)}</div></section>`).join("")}
   </article></div>`;
-  bindSide(); window.scrollTo(0, 0);
+  bindSide(); glossify($("article.card"));
+  document.querySelectorAll(".toc a").forEach(a => a.onclick = e => { e.preventDefault();
+    $("#s-" + a.dataset.s).scrollIntoView({behavior: "smooth", block: "start"}); });
+  window.scrollTo(0, 0);
 }
 function question(r, q, n){
   const done = (PROG[r.id] || {})[q.id];
@@ -274,7 +454,7 @@ function question(r, q, n){
   if (q.type === "choice") return `<div class="q" data-q="${q.id}">${head}${q.options.map((o, i) =>
     `<button class="opt" data-i="${i}">${inline(o)}</button>`).join("")}<div class="out"></div></div>`;
   if (q.type === "spot") return `<div class="q" data-q="${q.id}">${head}<div class="code">${q.code.split("\n").map((l, i) =>
-    `<div class="ln" data-l="${i + 1}"><i>${i + 1}</i>${esc(l) || " "}</div>`).join("")}</div>
+    `<div class="ln" data-l="${i + 1}" tabindex="0" role="button" aria-pressed="false"><i>${i + 1}</i>${esc(l) || " "}</div>`).join("")}</div>
     <div class="row"><button class="btn chk">고른 줄 확인</button><span class="prog">줄을 눌러 고르세요</span></div><div class="out"></div></div>`;
   return `<div class="q" data-q="${q.id}">${head}<textarea placeholder="먼저 직접 답을 적어 보세요"></textarea>
     <div class="row"><button class="btn show">기준표 보기</button></div><div class="out"></div></div>`;
@@ -287,8 +467,21 @@ function quizView(id){
   const qs = DATA.quizzes[r.id].questions;
   $("#app").innerHTML = `<div class="layout">${sidebar(r.id, "quiz")}<article class="card">
     <div class="meta"><a class="tag" href="#rule/${encodeURIComponent(r.id)}">← 규칙 본문</a></div>
-    <h1 class="t">${esc(r.title)}</h1><div id="qs">${qs.map((q, n) => question(r, q, n)).join("")}</div></article></div>`;
+    <h1 class="t">${esc(short(r))}</h1><div class="qsum" id="qsum"></div>
+    <div id="qs">${qs.map((q, n) => question(r, q, n)).join("")}</div>
+    <div class="row qend"><button type="button" class="btn ghost" id="retry">처음부터 다시 풀기</button>
+      <a class="btn" id="nextq" href="#quiz">다음 퀴즈 →</a></div></article></div>`;
   bindSide();
+  // 점수 요약 + 왼쪽 목록의 "퀴즈 n/m"을 답할 때마다 갱신(화면 전체는 다시 그리지 않는다)
+  const paint = () => { const s = quizState(r.id);
+    $("#qsum").innerHTML = `<div class="bars"><span style="width:${s.ok / s.n * 100}%;background:var(--ok)"></span><span style="width:${s.no / s.n * 100}%;background:var(--bad)"></span></div>
+      <span>맞힘 <b>${s.ok}</b></span><span>틀림 <b>${s.no}</b></span><span>남음 <b>${s.left}</b></span><span>/ ${s.n}문제</span>`;
+    $(".list").innerHTML = listItems(r.id, "quiz")[1]; };
+  const answer = (qid, val) => { mark(r.id, qid, val); paint(); };
+  const order = filtered("quiz"), at = order.findIndex(x => x.id === r.id), nx = order[(at + 1) % order.length];
+  if (nx && nx.id !== r.id) $("#nextq").href = "#quiz/" + enc(nx.id); else $("#nextq").remove();
+  $("#retry").onclick = () => { delete PROG[r.id]; saveProg(PROG); quizView(r.id); };
+  paint();
   qs.forEach(q => {
     const box = document.querySelector(`.q[data-q="${q.id}"]`), out = box.querySelector(".out");
     const explain = ok => `<div class="exp">${ok === null ? "" : ok ? '<b class="ok">맞았습니다.</b> ' : '<b class="bad">아닙니다.</b> '}${inline(q.explain)}
@@ -297,16 +490,18 @@ function quizView(id){
       const ok = +b.dataset.i === q.answer;
       box.querySelectorAll(".opt").forEach(x => x.classList.remove("ok", "bad"));
       b.classList.add(ok ? "ok" : "bad"); if (!ok) box.querySelector(`.opt[data-i="${q.answer}"]`).classList.add("ok");
-      out.innerHTML = explain(ok); mark(r.id, q.id, ok ? "ok" : "no");
+      out.innerHTML = explain(ok); answer(q.id, ok ? "ok" : "no");
     });
     if (q.type === "spot"){
-      box.querySelectorAll(".ln").forEach(l => l.onclick = () => l.classList.toggle("pick"));
+      box.querySelectorAll(".ln").forEach(l => {
+        l.onclick = () => l.setAttribute("aria-pressed", l.classList.toggle("pick"));
+        l.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); l.click(); } }; });
       box.querySelector(".chk").onclick = () => {
         const picked = [...box.querySelectorAll(".ln.pick")].map(l => +l.dataset.l).sort((a, b) => a - b);
         const ans = [...q.answer_lines].sort((a, b) => a - b), ok = JSON.stringify(picked) === JSON.stringify(ans);
         box.querySelectorAll(".ln").forEach(l => { l.classList.remove("ok", "bad");
           if (ans.includes(+l.dataset.l)) l.classList.add("ok"); else if (l.classList.contains("pick")) l.classList.add("bad"); });
-        out.innerHTML = explain(ok); mark(r.id, q.id, ok ? "ok" : "no");
+        out.innerHTML = explain(ok); answer(q.id, ok ? "ok" : "no");
       };
     }
     if (q.type === "scenario") box.querySelector(".show").onclick = () => {
@@ -315,7 +510,7 @@ function quizView(id){
       const boxes = out.querySelectorAll("input"), tail = out.querySelector(".tail");
       const upd = () => { const n = [...boxes].filter(b => b.checked).length; const ok = n === boxes.length;
         tail.innerHTML = `<div class="prog" style="margin:8px 0">${n}/${boxes.length} 충족</div>${inline(q.explain)}`;
-        mark(r.id, q.id, ok ? "ok" : "no"); };
+        answer(q.id, ok ? "ok" : "no"); };
       boxes.forEach(b => b.onchange = upd); upd();
     };
   });
@@ -326,9 +521,10 @@ const GRADE = {1: "입문", 2: "초중급", 3: "중급", 4: "고급"};
 const stars = g => "★".repeat(g) + "☆".repeat(4 - g);
 const projById = Object.fromEntries((DATA.projects || []).map(p => [p.id, p]));
 const pstate = {cat: "", grade: 0};
-const ruleLink = id => byId[id] ? `<a href="#rule/${encodeURIComponent(id)}">${esc(byId[id].title)}</a>` : "";
-function projectsView(){
+const ruleLink = id => byId[id] ? `<a href="#rule/${enc(id)}" title="${esc(byId[id].title)}">${esc(short(byId[id]))}</a>` : "";
+function projectsView(cat){
   nav("projects");
+  if (cat !== undefined) pstate.cat = cat;
   const P = DATA.projects || [];
   // 카테고리는 "AI 응용 · 서버"처럼 두 단계 — 필터는 앞 단계(큰 묶음)로만 고른다.
   const group = c => c.split(" · ")[0];
@@ -342,9 +538,9 @@ function projectsView(){
     ${DATA.method ? `<details class="card method"><summary><span class="eyebrow">HOW · 결정 기록 방식</span>
       <b>모든 결정은 D·H·P·O 번호로 남깁니다</b><span class="more">펼치기</span></summary><div class="md">${md(DATA.method)}</div></details>` : ""}
     <div class="pfilter"><span class="flabel">카테고리</span><div class="chips">${["", ...cats].map(c =>
-      `<span class="chip ${pstate.cat === c ? "on" : ""}" data-c="${esc(c)}">${c ? esc(c) : "전체"}</span>`).join("")}</div>
+      `<button type="button" class="chip ${pstate.cat === c ? "on" : ""}" data-c="${esc(c)}" aria-pressed="${pstate.cat === c}">${c ? esc(c) : "전체"}</button>`).join("")}</div>
       <span class="flabel">설계 난이도</span><div class="chips">${[0, 1, 2, 3, 4].map(g =>
-      `<span class="chip ${pstate.grade === g ? "on" : ""}" data-g="${g}">${g ? stars(g) + " " + GRADE[g] : "전체"}</span>`).join("")}</div></div>
+      `<button type="button" class="chip ${pstate.grade === g ? "on" : ""}" data-g="${g}" aria-pressed="${pstate.grade === g}">${g ? stars(g) + " " + GRADE[g] : "전체"}</button>`).join("")}</div></div>
     <div class="grid">${shown.map(p => `<a class="card pc pcard" href="#project/${encodeURIComponent(p.id)}">
       <div class="pg"><span class="stars">${stars(p.grade)}</span><span>${GRADE[p.grade]}</span>${p.public ? "" : `<span class="tag warn">비공개</span>`}</div>
       <h3>${esc(p.name)}</h3><div class="n">${esc(p.category)} · ${esc(p.status)}</div>
@@ -370,8 +566,8 @@ function projectView(id){
       ${DATA.course_link && p.course_card ? `<a class="tag" href="${esc(DATA.course_link)}" target="_blank" rel="noopener">기초 강좌 샘플 카드: ${esc(p.course_card)} ↗</a>` : ""}</div>
     <div class="pg big"><span class="stars">${stars(p.grade)}</span><span>설계 난이도 · ${GRADE[p.grade]}</span>${p.public ? "" : `<span class="tag warn">비공개</span>`}</div>
     <h1 class="t">${esc(p.name)}</h1>
-    <div class="meta"><span class="tag">${esc(p.category)}</span><span class="tag">${esc(p.status)}</span>
-      ${p.stack.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+    <div class="meta"><a class="tag" href="#projects/${enc(p.category.split(" · ")[0])}" title="같은 분류의 프로젝트 보기">${esc(p.category)}</a><span class="tag">${esc(p.status)}</span>
+      ${p.stack.map(t => `<a class="tag" href="#tag/${enc(t)}" title="이 기술 태그의 규칙 보기">${esc(t)}</a>`).join("")}</div>
     <div class="intro">${esc(p.summary)}</div>
     <div class="two"><div class="box"><div class="eyebrow">🎯 설계 포인트</div><ul>${p.design_points.map(x => `<li>${inline(x)}</li>`).join("")}</ul></div>
       <div class="box"><div class="eyebrow">✅ 확인 항목</div><ul>${p.checks.map(x => `<li>${inline(x)}</li>`).join("")}</ul></div></div>
@@ -390,12 +586,13 @@ function projectView(id){
   const more = $("#more"); if (more) more.onclick = () => { document.querySelectorAll(".rl .fold").forEach(x => x.classList.remove("fold")); more.remove(); };
   window.scrollTo(0, 0);
 }
-function route(keepFocus){
+function route(){
   const [v, raw] = location.hash.slice(1).split("/"); const id = raw ? decodeURIComponent(raw) : "";
-  const pos = keepFocus && document.activeElement && document.activeElement.id === "q" ? document.activeElement.selectionStart : null;
-  if (v === "quiz") quizView(id); else if (v === "projects") projectsView();
-  else if (v === "project") projectView(id); else ruleView(id);
-  if (pos !== null){ const q = $("#q"); if (q){ q.focus(); q.setSelectionRange(pos, pos); } }
+  if (v === "quiz") quizView(id); else if (v === "projects") projectsView(raw === undefined ? undefined : id);
+  else if (v === "project") projectView(id);
+  else if (v === "terms" || v === "term") termsView(id);
+  else if (v === "tag"){ Object.assign(state, {tag: id, q: "", kind: "", project: "", qf: ""}); ruleView(""); }
+  else ruleView(id);
 }
 if (DATA.course_link){ const c = $("#course"); c.href = DATA.course_link; c.hidden = false; }
 window.addEventListener("hashchange", () => route());

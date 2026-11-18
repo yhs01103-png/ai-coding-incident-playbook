@@ -1,0 +1,58 @@
+{
+  "rule_id": "MCP_Tool_Prompt_선택_completion_활용_패턴",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "section": "원인",
+      "situation": "MCP 서버에 '사용자가 /이름으로 등록된 스니펫을 직접 골라 쓰고, 타이핑하면 후보가 뜨는' 기능을 만들려 한다. 써야 할 프리미티브는?",
+      "options": [
+        "Tool — 설명(description)을 자세히 쓰면 메뉴로 보인다",
+        "Prompt — 클라이언트가 슬래시커맨드로 노출하고, 인자 자동완성(completion/complete)도 Prompt 전용이다",
+        "Tool에 completion 핸들러를 붙인다",
+        "Resource만 등록하면 슬래시커맨드가 생긴다"
+      ],
+      "answer": 1,
+      "explain": "Tool은 에이전트가 스스로 판단해 부르는 대상이라 사용자 메뉴로 보이지 않고 자동완성 메커니즘도 없다. '사용자가 직접 고르는가, 에이전트가 판단하는가'로 먼저 나누면 프리미티브가 정해진다."
+    },
+    {
+      "id": "q2",
+      "type": "spot",
+      "section": "부가 — 인자 없이도 호출되게: 파라미터 기본값으로 \"필수 아님\"을 스키마에 반영",
+      "situation": "Claude Code CLI에서 인자 없이 /서버:snippet을 부르면 'Missing required argument'로 막힌다. 인자 없이도 '등록 목록 보기'로 동작하게 하려면 고칠 줄을 고르세요.",
+      "code": "@server.prompt()\ndef snippet(name: str) -> str:\n    \"\"\"등록된 스니펫을 꺼낸다. \"0\"은 등록 목록.\"\"\"\n    if name == \"0\":\n        return list_snippets()\n    return load_snippet(name)",
+      "answer_lines": [
+        2
+      ],
+      "explain": "SDK는 파이썬 파라미터에 기본값이 있는지로 스키마의 required를 정한다. name: str = \"0\"으로 바꾸면 required에서 빠져 무인자 호출이 통과하고, 기본값은 '인자 없이 부르면 기대하는 의미'(목록 보기)에 맞춘다."
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "section": "중요한 단서(2026-09-08) — Claude Code CLI는 아직 completion/complete를 안 부른다",
+      "situation": "서버에 completion() 핸들러를 스펙대로 구현했는데 CLI에서 인자를 칠 때 후보가 전혀 뜨지 않는다. 가장 맞는 판단은?",
+      "options": [
+        "서버 구현 버그이므로 핸들러를 다시 고친다",
+        "CLI 클라이언트가 completion/complete 요청 자체를 보내지 않는다 — 서버를 고쳐서는 해결되지 않는다",
+        "/mcp의 Reconnect를 누르면 새 코드가 반영돼 해결된다",
+        "Tool로 바꾸면 자동완성이 뜬다"
+      ],
+      "answer": 1,
+      "explain": "스펙 기능이 서버에 있어도 클라이언트가 부르는지는 별개다(관련 이슈는 not planned로 종료). Reconnect는 이미 뜬 로컬 stdio 프로세스에 다시 붙을 뿐이라 코드 변경을 반영하려면 세션을 재시작해야 한다."
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "section": "부가 — 무인 트리거의 비용을 2단계로 분리하기",
+      "situation": "스케줄러가 60분마다 '무거운 LLM 세션을 열지' 결정한다. 사람이 응답하지 않을 때의 비용을 줄이는 구조는?",
+      "options": [
+        "매 주기 세션을 바로 열고, 응답이 없으면 닫는다",
+        "먼저 저비용 알림(OS 토스트)만 띄우고, 사람이 정해진 시간 안에 응답한 주기에만 세션을 연다",
+        "세션을 상시 띄워 두고 주기마다 질문만 보낸다",
+        "스케줄러를 없애고 사람이 기억해서 연다"
+      ],
+      "answer": 1,
+      "explain": "저비용 게이트 뒤에 무거운 실행을 숨긴다. win11toast의 toast()는 블로킹이고 자체 타임아웃이 없어, 별도 스레드에서 돌리고 thread.join(timeout=N)으로 기다리는 식으로 감싸야 '응답 없으면 포기'가 된다."
+    }
+  ]
+}
