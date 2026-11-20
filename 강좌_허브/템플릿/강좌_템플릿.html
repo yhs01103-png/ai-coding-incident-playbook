@@ -146,6 +146,10 @@ section.s.plain{border-left:0;margin-left:0;padding-left:0}
 .tlh{display:flex;gap:8px;align-items:center}.ref{font:700 12px var(--mono);color:var(--accent);background:var(--accent-soft);padding:1px 8px;border-radius:6px}
 .date{font-size:12px;color:var(--dim)}.tlt{font-weight:700;font-size:16px;margin:4px 0 6px;color:var(--ink)}
 .tlr{color:var(--body);font-size:14.5px;margin:3px 0}.tlr .lbl{display:inline-block;min-width:58px;font-size:12px;font-weight:700;color:var(--dim)}
+.rev{font-size:12px;font-weight:700;color:var(--checklist);border:1px solid currentColor;padding:0 7px;border-radius:6px}
+.tld{margin:8px 0 2px;border:1px solid var(--line2);border-radius:10px;padding:2px 12px;background:var(--soft)}
+.tld summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);padding:6px 0}
+.tld ul{margin:2px 0 6px;padding-left:18px}.tld li{margin:2px 0;padding:0}.tld li::before{display:none}
 .rl{margin:6px 0;padding-left:18px}.rl li{margin:6px 0}.rl .tag{margin-left:4px}.rl .fold{display:none}
 .hero{margin-bottom:18px}.hero h2{margin:0;font-size:22px}.hero p{margin:4px 0 0;color:var(--sub)}
 .prog{font-size:12px;color:var(--sub)}
@@ -220,6 +224,7 @@ button.chip{font-family:inherit;line-height:1.6}
     <a href="#rules" data-v="rules">규칙</a>
     <a href="#quiz" data-v="quiz">퀴즈</a>
     <a href="#projects" data-v="projects">프로젝트</a>
+    <a href="#decisions" data-v="decisions">결정</a>
     <a href="#terms" data-v="terms">용어</a>
     <a id="course" href="#" target="_blank" rel="noopener" hidden>기초 강좌 ↗</a>
   </nav>
@@ -518,8 +523,15 @@ function quizView(id){
   window.scrollTo(0, 0);
 }
 // ---------- 프로젝트 (강좌_v2 "만들어본 것들"과 같은 등급제) ----------
-const GRADE = {1: "입문", 2: "초중급", 3: "중급", 4: "고급"};
-const stars = g => "★".repeat(g) + "☆".repeat(4 - g);
+const GRADE = {1: "입문", 2: "초중급", 3: "중급", 4: "고급", 5: "운영 설계"};
+const stars = g => "★".repeat(g) + "☆".repeat(5 - g);
+const GRADE_WHY = [
+  "흐름 하나(A → B)에 기억할 상태가 없다. 실패해도 다시 돌리면 끝난다.",
+  "조건 분기와 자기 상태(설정·이력, 중복 실행 방지)가 생긴다. 상태를 기억하는 순간 꼬일 곳이 생긴다.",
+  "독립된 부분 둘 이상(워커·스케줄·스레드·다른 앱 조작)이 협력하고 사람 없이 돈다. 경계와 안전장치를 설계해야 한다.",
+  "클라이언트·서버·워커·저장까지 전체 시스템에 동시성과 테스트 체계가 붙는다. 한 곳을 고치면 다른 진입점이 흔들린다.",
+  "고급에 더해 배포 · 클라이언트 2종 이상이 같은 서버 규칙 공유 · 돈과 한도 · 인증과 개인정보 · 되돌리기 어려운 변경(DB 이전·롤아웃) 중 셋 이상을 설계로 다룬다. 틀리면 남의 데이터나 돈이 상한다."
+];
 const projById = Object.fromEntries((DATA.projects || []).map(p => [p.id, p]));
 const pstate = {cat: "", grade: 0};
 const ruleLink = id => byId[id] ? `<a href="#rule/${enc(id)}" title="${esc(byId[id].title)}">${esc(short(byId[id]))}</a>` : "";
@@ -540,8 +552,11 @@ function projectsView(cat){
       <b>모든 결정은 D·H·P·O 번호로 남깁니다</b><span class="more">펼치기</span></summary><div class="md">${md(DATA.method)}</div></details>` : ""}
     <div class="pfilter"><span class="flabel">카테고리</span><div class="chips">${["", ...cats].map(c =>
       `<button type="button" class="chip ${pstate.cat === c ? "on" : ""}" data-c="${esc(c)}" aria-pressed="${pstate.cat === c}">${c ? esc(c) : "전체"}</button>`).join("")}</div>
-      <span class="flabel">설계 난이도</span><div class="chips">${[0, 1, 2, 3, 4].map(g =>
+      <span class="flabel">설계 난이도</span><div class="chips">${[0, 1, 2, 3, 4, 5].map(g =>
       `<button type="button" class="chip ${pstate.grade === g ? "on" : ""}" data-g="${g}" aria-pressed="${pstate.grade === g}">${g ? stars(g) + " " + GRADE[g] : "전체"}</button>`).join("")}</div></div>
+    <details class="card method"><summary><span class="eyebrow">HOW · 설계 난이도 기준</span>
+      <b>줄 수나 기술 이름이 아니라, 설계할 때 동시에 다뤄야 하는 것으로 잽니다</b><span class="more">펼치기</span></summary>
+      <ol class="md glv">${GRADE_WHY.map((w, i) => `<li><b>${stars(i + 1)} ${GRADE[i + 1]}</b> — ${w}</li>`).join("")}</ol></details>
     <div class="grid">${shown.map(p => `<a class="card pc pcard" href="#project/${encodeURIComponent(p.id)}">
       <div class="pg"><span class="stars">${stars(p.grade)}</span><span>${GRADE[p.grade]}</span>${p.public ? "" : `<span class="tag warn">비공개</span>`}</div>
       <h3>${esc(p.name)}</h3><div class="n">${esc(p.category)} · ${esc(p.status)}</div>
@@ -556,6 +571,40 @@ function projectsView(cat){
   document.querySelectorAll(".pfilter .chip").forEach(c => c.onclick = () => {
     if (c.dataset.c !== undefined) pstate.cat = c.dataset.c; else pstate.grade = +c.dataset.g; projectsView(); });
   window.scrollTo(0, 0);
+}
+// 전환점 하나 — 프로젝트 화면과 결정 화면이 같이 쓴다. p를 주면 프로젝트 이름을 머리에 붙인다.
+function msItem(m, p){
+  const rej = m.rejected || [];
+  return `<li><div class="tlh"><span class="ref">${esc(m.ref)}</span><span class="date">${esc(m.date || "")}</span>${m.reverses ? `<span class="rev" title="예전 결정을 고치지 않고 새 번호로 뒤집음">${esc(m.reverses)} 뒤집음</span>` : ""}
+      ${p ? `<a class="tag" href="#project/${enc(p.id)}">${esc(p.name)}</a>` : ""}</div>
+    <div class="tlt">${inline(m.title)}</div>
+    <div class="tlr"><span class="lbl">왜</span>${inline(m.why)}</div>
+    <div class="tlr"><span class="lbl">바뀐 것</span>${inline(m.changed)}</div>
+    ${rej.length || m.verified ? `<details class="tld"><summary>어떻게 정했나 — ${[rej.length ? `버린 대안 ${rej.length}개` : "", m.verified ? "검증" : ""].filter(Boolean).join(" · ")}</summary>
+      ${rej.length ? `<div class="tlr"><span class="lbl">버린 대안</span></div><ul>${rej.map(x => `<li>${inline(x)}</li>`).join("")}</ul>` : ""}
+      ${m.verified ? `<div class="tlr"><span class="lbl">검증</span>${inline(m.verified)}</div>` : ""}</details>` : ""}
+    ${m.rules.length ? `<div class="tlr"><span class="lbl">관련 규칙</span>${m.rules.map(ruleLink).join(" · ")}</div>` : ""}</li>`;
+}
+// ---------- 결정 (모든 프로젝트의 전환점을 날짜순으로) ----------
+const DF = {"": "전체", rev: "뒤집은 결정", rej: "버린 대안 있음", ver: "검증 있음"};
+const dstate = {f: "", p: ""};
+function decisionsView(){
+  nav("decisions");
+  const all = (DATA.projects || []).flatMap(p => p.milestones.map(m => ({m, p})));
+  const pass = ({m, p}) => (!dstate.p || p.id === dstate.p) &&
+    (dstate.f === "rev" ? !!m.reverses : dstate.f === "rej" ? (m.rejected || []).length > 0 : dstate.f === "ver" ? !!m.verified : true);
+  const shown = all.filter(pass).sort((a, b) => (b.m.date || "").localeCompare(a.m.date || ""));
+  const cnt = f => all.filter(x => f === "rev" ? x.m.reverses : f === "rej" ? (x.m.rejected || []).length : f === "ver" ? x.m.verified : true).length;
+  const projs = (DATA.projects || []).filter(p => p.milestones.length);
+  $("#app").innerHTML = `<div class="hero"><div class="eyebrow">DECISIONS · 결정 기록</div><h2>무엇을 왜 정했고, 무엇을 버렸나</h2>
+      <p>프로젝트 ${projs.length}개의 큰 결정 ${all.length}건을 최신순으로 모았어요. 결정은 지우지 않고 새 번호로 뒤집고, 버린 대안과 검증을 같이 남깁니다.</p></div>
+    <div class="pfilter"><span class="flabel">보기</span><div class="chips">${Object.entries(DF).map(([k, l]) =>
+      `<button type="button" class="chip ${dstate.f === k ? "on" : ""}" data-f="${k}" aria-pressed="${dstate.f === k}">${l} <b>${cnt(k)}</b></button>`).join("")}</div>
+      <span class="flabel">프로젝트</span><div class="chips">${[{id: "", name: "전체"}, ...projs].map(p =>
+      `<button type="button" class="chip ${dstate.p === p.id ? "on" : ""}" data-p="${esc(p.id)}" aria-pressed="${dstate.p === p.id}">${esc(p.name)}</button>`).join("")}</div></div>
+    <section class="card s plain">${shown.length ? `<ol class="tl">${shown.map(x => msItem(x.m, x.p)).join("")}</ol>` : `<p class="hint">조건에 맞는 결정이 없어요.</p>`}</section>`;
+  document.querySelectorAll(".pfilter .chip").forEach(c => c.onclick = () => {
+    if (c.dataset.f !== undefined) dstate.f = c.dataset.f; else dstate.p = c.dataset.p; decisionsView(); });
 }
 function projectView(id){
   nav("projects");
@@ -573,11 +622,7 @@ function projectView(id){
     <div class="two"><div class="box"><div class="eyebrow">🎯 설계 포인트</div><ul>${p.design_points.map(x => `<li>${inline(x)}</li>`).join("")}</ul></div>
       <div class="box"><div class="eyebrow">✅ 확인 항목</div><ul>${p.checks.map(x => `<li>${inline(x)}</li>`).join("")}</ul></div></div>
     <section class="s plain"><h2>전환점 <span class="hint">결정 기록에서 고른 큰 결정 · 원래 번호 그대로</span></h2>
-      <ol class="tl">${p.milestones.map(m => `<li><div class="tlh"><span class="ref">${esc(m.ref)}</span><span class="date">${esc(m.date || "")}</span></div>
-        <div class="tlt">${inline(m.title)}</div>
-        <div class="tlr"><span class="lbl">왜</span>${inline(m.why)}</div>
-        <div class="tlr"><span class="lbl">바뀐 것</span>${inline(m.changed)}</div>
-        ${m.rules.length ? `<div class="tlr"><span class="lbl">관련 규칙</span>${m.rules.map(ruleLink).join(" · ")}</div>` : ""}</li>`).join("")}</ol></section>
+      <ol class="tl">${p.milestones.map(m => msItem(m)).join("")}</ol></section>
     <section class="s plain"><h2>실측 규칙 <span class="hint">이 프로젝트에서 실제로 겪고 정리한 규칙</span></h2>
       ${p.rules_real.length ? `<ul class="rl">${p.rules_real.map(r => `<li>${ruleLink(r)}</li>`).join("")}</ul>` : `<p class="hint">아직 없음</p>`}</section>
     <section class="s plain"><h2>적용 가능 규칙 <span class="hint">기술 스택이 겹치는 다른 프로젝트의 규칙 · 많이 겹치는 순</span></h2>
@@ -591,6 +636,7 @@ function route(){
   const [v, raw] = location.hash.slice(1).split("/"); const id = raw ? decodeURIComponent(raw) : "";
   if (v === "quiz") quizView(id); else if (v === "projects") projectsView(raw === undefined ? undefined : id);
   else if (v === "project") projectView(id);
+  else if (v === "decisions") decisionsView();
   else if (v === "terms" || v === "term") termsView(id);
   else if (v === "tag"){ Object.assign(state, {tag: id, q: "", kind: "", project: "", qf: ""}); ruleView(""); }
   else ruleView(id);

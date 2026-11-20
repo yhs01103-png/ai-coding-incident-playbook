@@ -1,5 +1,7 @@
 """규칙 JSON 고정 스키마 검사. 오류 문장 목록을 돌려주고, 비어 있으면 통과."""
 
+import re
+
 from logic.classify import KINDS, TAGS
 
 PROJECT_STATUSES = {"운영", "개발 중", "보류", "완료"}
@@ -10,8 +12,8 @@ PROJECT_LISTS = ("stack", "design_points", "checks", "milestones")
 def validate_project(p: dict, rule_ids: set[str]) -> list[str]:
     errs = [f"{f}: 비어 있음" for f in PROJECT_TEXT if not str(p.get(f, "")).strip()]
     errs += [f"{f}: 목록 아님 또는 없음" for f in PROJECT_LISTS if not isinstance(p.get(f), list)]
-    if p.get("grade") not in (1, 2, 3, 4):
-        errs.append(f"grade: 1~4 아님 {p.get('grade')!r}")
+    if p.get("grade") not in (1, 2, 3, 4, 5):
+        errs.append(f"grade: 1~5 아님 {p.get('grade')!r}")
     if p.get("status") not in PROJECT_STATUSES:
         errs.append(f"status: {sorted(PROJECT_STATUSES)} 중 하나가 아님 {p.get('status')!r}")
     errs += [f"stack: 태그 목록에 없는 {t!r}" for t in p.get("stack") or [] if t not in TAGS]
@@ -20,6 +22,14 @@ def validate_project(p: dict, rule_ids: set[str]) -> list[str]:
             if not str(m.get(f, "")).strip():
                 errs.append(f"milestones[{i}].{f}: 비어 있음")
         errs += [f"milestones[{i}].rules: 없는 규칙 {r!r}" for r in m.get("rules", []) if r not in rule_ids]
+        # 깊이 항목(버린 대안·검증·뒤집은 번호)은 선택 — 있으면 모양만 본다.
+        rej = m.get("rejected")
+        if rej is not None and (not isinstance(rej, list) or not all(isinstance(x, str) and x.strip() for x in rej)):
+            errs.append(f"milestones[{i}].rejected: 빈칸 없는 문장 목록이어야 함")
+        if "verified" in m and not str(m["verified"]).strip():
+            errs.append(f"milestones[{i}].verified: 비어 있음")
+        if "reverses" in m and not re.fullmatch(r"[A-Z]+-\d+", str(m["reverses"])):
+            errs.append(f"milestones[{i}].reverses: 결정 번호(예: D-061) 아님 {m['reverses']!r}")
     return errs
 
 TERM_TEXT = ("id", "term", "category", "short", "explain")

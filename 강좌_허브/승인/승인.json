@@ -290,38 +290,38 @@
     "kind": "doc"
   },
   "project:AWDSD": {
-    "hash": "d678e2f229a19fa7b83f413efd6738aa5342635e6426ab2e6d42a7888335922b",
-    "approved_at": "2026-11-17",
+    "hash": "4b34b4d191d2325a9294ff5b66b620713f6931f09ba2742babfcabaa8939fbb8",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:AllAd_Launcher": {
-    "hash": "e2a935e38ba076c0e8c54575fae47e8b8012042af3e1f7f5fea8a3b41b225499",
-    "approved_at": "2026-11-17",
+    "hash": "4a1a8ae5dcece67edf1ed211a7e1adf06e1344a193f9def4e24b269cc6aee2af",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:FileLens_App": {
-    "hash": "96b0ec67812bd302378b8cd58e504f056516e7f057817d59c3b8c4802517748c",
-    "approved_at": "2026-11-17",
+    "hash": "fa7cf7f31b142e716f1bfe7fc855a71e3ae475b7048b5a8fec62b5ffd3fee6a4",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:Hub_App": {
-    "hash": "eaeca1a6fea4b5af7d44766ccb7566c6b8127cbf6ae2735772fe168ddb7cbfc6",
-    "approved_at": "2026-11-17",
+    "hash": "a57ef5a3b960c9b2eb3d8cf159d854ea917d3da36fa9db62320be8181132f26f",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:JudgeCal_Athe": {
-    "hash": "36d93faa97d485de057832c535eb9065074c1df21d790f8892a87b3162ded9c9",
-    "approved_at": "2026-11-17",
+    "hash": "6c89de247492fc7bddd758bcadc38fc6603acf457f2c15ef90ce481cd00a92df",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:Lazzy_App_OS_Monorepo": {
-    "hash": "c6a168b73d7d909764e6671e948aa4c515f89ef5aa970a251715de6f6e0fb471",
-    "approved_at": "2026-11-17",
+    "hash": "78904d758f25550fc6fc40583a14a28458fa013426fae20c9a210344ac8ea7b0",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:Market_Agent_App": {
-    "hash": "2a8154e033735671f9d22b9c08681c75622b48b0352104ca8a7b66deab7a9721",
-    "approved_at": "2026-11-17",
+    "hash": "f78f47421281fcbaef4b0aa5daee7c826d22fbd8083f7a70cfa06e4a688b51e6",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:Plug_in_Vesion": {
@@ -330,13 +330,13 @@
     "kind": "doc"
   },
   "project:RVS_App": {
-    "hash": "7780fc52ea55b9cd78a19f60cbb27add0f1eeee5b6389af373a73687cc37e9a8",
-    "approved_at": "2026-11-17",
+    "hash": "0c3a6d44c9ee29cb38bbc210324f4771ae9e7cd528c31155181e3ec12fe01ab4",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:SSOT_Explorer": {
-    "hash": "7af0e09d36d6f85ed2c79f35c39a540896c8f4632cc0ae1e8ff2c49c0453e644",
-    "approved_at": "2026-11-17",
+    "hash": "00fa5dafa81eb8a042222081e2e994118d9b884cfc8237fbed4cb0ccc250b4a5",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:_기록방식": {
@@ -345,8 +345,8 @@
     "kind": "doc"
   },
   "project:poker_app": {
-    "hash": "65fb2b7e3fca262074ff6e46c559cfdac681e9f8a0a3a76acfa4a0b1d1fead98",
-    "approved_at": "2026-11-17",
+    "hash": "8d62dcbdfc80ec0e60535874c66646eb27956a6218217278002ce0913d26a201",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "project:대화전용_AI": {
@@ -375,8 +375,8 @@
     "kind": "doc"
   },
   "project:터미널_단축키_모음집": {
-    "hash": "42aef93233b32fa5604bd8610e5b1556d8741472367b1047be9041efb39e3847",
-    "approved_at": "2026-11-17",
+    "hash": "9604a2749f273a457f9ac58c2cf48d4f4bc6fe0472406a20c7c98c216048323b",
+    "approved_at": "2026-11-20",
     "kind": "doc"
   },
   "term:BOM": {

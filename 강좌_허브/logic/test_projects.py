@@ -38,11 +38,24 @@ def test_validate_project_ok():
 
 
 def test_validate_project_catches_bad_values():
-    bad = dict(GOOD, grade=5, status="몰라", stack=["없는태그"],
+    assert validate_project(dict(GOOD, grade=5), {"a"}) == []  # ★5 운영 설계
+    bad = dict(GOOD, grade=6, status="몰라", stack=["없는태그"],
                milestones=[{"ref": "", "title": "t", "why": "", "changed": "c", "rules": ["zz"]}])
     errs = " ".join(validate_project(bad, {"a"}))
     for key in ("grade", "status", "stack", "ref", "why", "zz"):
         assert key in errs, key
+
+
+def test_validate_project_milestone_depth_fields():
+    deep = {"ref": "D-002", "title": "t", "why": "w", "changed": "c", "rules": [],
+            "rejected": ["버튼 단계 — 사람이 먼저 알아챌 일이 없음"], "verified": "테스트 12건 통과", "reverses": "D-001"}
+    assert validate_project(dict(GOOD, milestones=[deep]), {"a"}) == []
+    bad = dict(deep, rejected="문자열", verified="  ", reverses="예전 결정")
+    errs = " ".join(validate_project(dict(GOOD, milestones=[bad]), {"a"}))
+    for key in ("rejected", "verified", "reverses"):
+        assert key in errs, key
+    errs = " ".join(validate_project(dict(GOOD, milestones=[dict(deep, rejected=["", 3])]), {"a"}))
+    assert "rejected" in errs
 
 
 def test_tag_overrides_replace_auto_tags_and_report_bad_entries():
