@@ -355,23 +355,23 @@
     "kind": "doc"
   },
   "project:모조리_요약_NOVA": {
-    "hash": "ba1270fd7a188f1c3b132afa9a416dfe95d37e59495e52105543007e47d30ddd",
-    "approved_at": "2026-11-17",
+    "hash": "8cf3f4b324b0d05a75e9b27912653583d4a210780a3597f60f34a2fc101b9305",
+    "approved_at": "2026-11-21",
     "kind": "doc"
   },
   "project:미래_포커_ATOM": {
-    "hash": "20497fb8e34fbb27407d22800ac980548b134b04e4b7b55688ae7470c466669a",
-    "approved_at": "2026-11-17",
+    "hash": "4d6c032d60970536aac9b4d4a35dea18c8040477f7a9935c725ded3fcf8b726a",
+    "approved_at": "2026-11-21",
     "kind": "doc"
   },
   "project:설계도_생성": {
-    "hash": "b82a3736d94b3724920ff62a03d5a012d50a3da888fd9a821e3585d629fa844d",
-    "approved_at": "2026-11-17",
+    "hash": "cd2970478dc7a136e6768be1cdcece8a473e081186e4458fe4f7e186a1086eb5",
+    "approved_at": "2026-11-21",
     "kind": "doc"
   },
   "project:인간_모델링_대화봇": {
-    "hash": "c6b0dbcae5279ab5ccf500599092ecbaccbdec5187967d99d9cb835a2a630656",
-    "approved_at": "2026-11-17",
+    "hash": "dcdb19a08c270d4903f84768dfe2f4a38256de32bd821295fcc7519029111268",
+    "approved_at": "2026-11-21",
     "kind": "doc"
   },
   "project:터미널_단축키_모음집": {
