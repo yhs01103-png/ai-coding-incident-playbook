@@ -213,6 +213,8 @@ button.chip{font-family:inherit;line-height:1.6}
 .rhead{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
 .rhead h1.t{flex:1 1 320px}
 .rhead .btn{flex:none;margin-top:4px}
+.rhead .full{flex-basis:100%;order:2;margin-top:-6px}
+@media (max-width:600px){.rhead .btn{order:3;margin:0 0 14px}}
 .meta.p{margin-bottom:6px}
 .meta .ml{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--dim);margin-right:2px}
 </style>
@@ -435,8 +437,8 @@ function ruleView(id){
   const n = ((DATA.quizzes[r.id] || {}).questions || []).length;
   $("#app").innerHTML = `<div class="layout">${sidebar(r.id, "rules")}<article class="card">
     <div class="rhead"><h1 class="t">${esc(short(r))}</h1>
-      ${n ? `<a class="btn" href="#quiz/${enc(r.id)}">퀴즈 ${n}문제 풀기</a>` : ""}</div>
-    ${short(r) !== r.title ? `<p class="full">${inline(r.title)}</p>` : ""}
+      ${n ? `<a class="btn" href="#quiz/${enc(r.id)}">퀴즈 ${n}문제 풀기</a>` : ""}
+      ${short(r) !== r.title ? `<p class="full">${inline(r.title)}</p>` : ""}</div>
     ${r.projects.length ? `<div class="meta p"><span class="ml">실측</span>${r.projects.map(p => `<a class="tag" href="${projById[p] ? "#project/" + enc(p) : "#projects"}">${esc(projById[p] ? projById[p].name : p)}</a>`).join("")}</div>` : ""}
     <div class="meta">${(r.tags || []).map(t => `<a class="tag ghost" href="#tag/${enc(t)}" title="이 태그의 규칙 모두 보기">${esc(t)}</a>`).join("")}
       <span class="tag">갱신 ${esc(r.updated)}</span>${r.public ? "" : `<span class="tag warn">비공개</span>`}</div>
